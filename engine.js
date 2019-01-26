@@ -105,6 +105,17 @@ const Engine = function(document, Game) {
 					ctx.drawImage(
 						img, x * width, y * height, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight,
 					);
+					const flipCanvas = document.createElement('canvas');
+					flipCanvas.width = cropWidth;
+					flipCanvas.height = cropHeight;
+					const flipCtx = flipCanvas.getContext('2d');
+					flipCtx.translate(flipCanvas.width, 0);
+					flipCtx.scale(-1, 1);
+					flipCtx.drawImage(
+						img, x * width, y * height, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight,
+					);
+					flipCtx.setTransform(1, 0, 0, 1, 0, 0);
+
 					const index = y * cols + x;
 
 					const subTag = tag + "." + index;
@@ -112,7 +123,9 @@ const Engine = function(document, Game) {
 						type: 'img',
 						images: [{
 							canvas,
+							flipCanvas,
 							imgData: ctx.getImageData(0, 0, canvas.width, canvas.height),
+							flipImgData: flipCtx.getImageData(0, 0, flipCanvas.width, flipCanvas.height),
 						}],
 						offsetX,
 						offsetY,
@@ -343,6 +356,22 @@ const Engine = function(document, Game) {
 		return value;		
 	}
 
+	function checkSorted(elements, desc) {
+		const first = getValue(elements[0]);
+		for(let i=1; i<elements.length; i++) {
+			if(desc) {
+				if(first < getValue(elements[i])) {
+					return false;
+				}
+			} else {
+				if(first > getValue(elements[i])) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
 	function getValue(obj) {
 		if(typeof(obj)!='object') {
 			if(typeof(obj)==='undefined') {
@@ -357,6 +386,12 @@ const Engine = function(document, Game) {
 		let returnValue = obj;
 		if(obj.equal) {
 			returnValue = checkEqual(obj.equal);
+		}
+		if(obj.asc) {
+			returnValue = checkSorted(obj.asc, false);
+		}
+		if(obj.desc) {
+			returnValue = checkSorted(obj.desc, true);			
 		}
 		if(obj.add) {
 			returnValue = performAdd(obj.add);
@@ -392,13 +427,18 @@ const Engine = function(document, Game) {
 		const img = images[frame % images.length];
 		const xx = Math.floor(x + getValue(offsetX));
 		const yy = Math.floor(y + getValue(offsetY));
-		const { canvas, imgData } = img;
-		ctx.drawImage(canvas, xx, yy);
+		const { canvas, imgData, flipCanvas, flipImgData } = img;
+		const shouldFlip = getValue(sprite.flip);
+		ctx.drawImage(shouldFlip ? flipCanvas : canvas, xx, yy);
+
 		if(sprite && sprite.name) {
 			const imgX = Math.floor(mouse.x - xx);
 			const imgY = Math.floor(mouse.y - yy);
-			if(0 <= imgX && imgX < canvas.width && 0 <= imgY && imgY < canvas.height && imgData.data[(imgX + imgY * canvas.width) * 4 + 3]>0) {
-				sceneData.hovered = sprite;
+			if(0 <= imgX && imgX < canvas.width && 0 <= imgY && imgY < canvas.height) {
+				const data = shouldFlip ? flipImgData.data : imgData.data;
+				if (data[(imgX + imgY * canvas.width) * 4 + 3]>0) {
+					sceneData.hovered = sprite;
+				}
 			}
 		}
 	}

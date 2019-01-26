@@ -31,6 +31,8 @@ const Game = function() {
 							{ set: ['lastClick.sprite', { get: 'hovered.name' } ]},
 							{ if: { get: 'hovered.walkSpot' }, set: ['destination', { get: 'hovered.walkSpot' } ]},
 							{ ifnot: { get: 'hovered.walkSpot' }, set: ['destination', { get: 'lastClick' } ]},
+							{ set: ['flip', { desc: [ { get: 'person.x' }, { get: 'destination.x' } ]} ]},
+							{ set: ['lastClick.flip', { desc: [ { get: 'person.x' }, { get: 'destination.x' } ]} ]},
 						],
 					},
 					{
@@ -63,6 +65,10 @@ const Game = function() {
 							},
 						]
 					},
+					{
+						if: { get: 'onTarget' },
+						set: ['flip', { get:'destination.flip' } ],
+					},
 				],
 				sprites: [
 					{ type: 'rect',
@@ -76,11 +82,13 @@ const Game = function() {
 						x: { get:'person.x' },
 						y: { get:'person.y' },
 						ifnot: { get: 'onTarget' },
+						flip: { get: 'flip' },
 					},
 					{ name: 'person.0', 
 						x: { get:'person.x' },
 						y: { get:'person.y' },
 						if: { get: 'onTarget' },
+						flip: { get: 'flip' },
 					},
 					{ name: 'ball',
 						x: 32,
@@ -88,6 +96,7 @@ const Game = function() {
 						walkSpot: {
 							x: 35,
 							y: 97,
+							flip: true,
 						},
 					},
 				],
