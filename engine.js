@@ -11,22 +11,25 @@ const Engine = function(document, Game) {
 	const stock = {
 	};
 	const mouse = { x:0, y:0, down:false };
+	let sceneTime = 0;
+
 	let sceneData = {
 		mouse,
 	};
-	let sceneDataStored = {};
-	let sceneTime = 0;
 
 	let debugDiv = null;
 
-	function onNewScene(scene) {
+	function onNewScene() {
 		sceneData = {
 			mouse,
 		};
-		sceneDataStored = {};
 		if(scene.init) {
 			scene.init.forEach(action => renderAction(action, 0));
 		}
+	}
+
+	function onNewFrame() {
+		sceneData.hovered = null;
 	}
 
 	function setCanvas(canvas) {
@@ -98,7 +101,8 @@ const Engine = function(document, Game) {
 					const canvas = document.createElement('canvas');
 					canvas.width = cropWidth;
 					canvas.height = cropHeight;
-					canvas.getContext('2d').drawImage(
+					const ctx = canvas.getContext('2d');
+					ctx.drawImage(
 						img, x * width, y * height, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight,
 					);
 					const index = y * cols + x;
@@ -106,7 +110,10 @@ const Engine = function(document, Game) {
 					const subTag = tag + "." + index;
 					sprite = {
 						type: 'img',
-						images: [canvas],
+						images: [{
+							canvas,
+							imgData: ctx.getImageData(0, 0, canvas.width, canvas.height),
+						}],
 						offsetX,
 						offsetY,
 					};
@@ -139,7 +146,7 @@ const Engine = function(document, Game) {
 		}
 		if(scene !== newScene) {
 			scene = newScene;
-			onNewScene(scene);
+			onNewScene();
 		}
 
 		if(!scene) {
@@ -177,10 +184,11 @@ const Engine = function(document, Game) {
 	}
 
 	function renderScene(scene, now) {
+		onNewFrame();
 		clearCanvas(mainCanvas);
 		const { actions, sprites } = scene;
-		actions.forEach(action => renderAction(action, now));
 		sprites.forEach(sprite => renderSprite(sprite, now, 0, 0));
+		actions.forEach(action => renderAction(action, now));
 		renderDebug(now);
 	}
 
@@ -256,13 +264,13 @@ const Engine = function(document, Game) {
 				case 'img':
 					{
 						const { x, y } = sprite;
-						renderImage(spriteDefinition, getValue(x) + getValue(offsetX), getValue(y) + getValue(offsetY), now);
+						renderImage(sprite.name, spriteDefinition, getValue(x) + getValue(offsetX), getValue(y) + getValue(offsetY), now);
 					}
 					break;
 				case 'rect':
 					{
 						const { x, y } = sprite;
-						renderRect(spriteDefinition, getValue(x) + getValue(offsetX), getValue(y) + getValue(offsetY), now);
+						renderRect(sprite.name, spriteDefinition, getValue(x) + getValue(offsetX), getValue(y) + getValue(offsetY), now);
 					}
 					break;
 			}
@@ -353,17 +361,30 @@ const Engine = function(document, Game) {
 		return returnValue;
 	}
 
-	function renderImage(spriteDefinition, x, y, now) {
+	function renderImage(name, spriteDefinition, x, y, now) {
 		const { images, offsetX, offsetY } = spriteDefinition;
 		const frame = Math.floor(now / 1000 * spriteFrameRate);
 		const img = images[frame % images.length];
-		ctx.drawImage(img, Math.floor(x + getValue(offsetX)), Math.floor(y + getValue(offsetY)));
+		const xx = Math.floor(x + getValue(offsetX));
+		const yy = Math.floor(y + getValue(offsetY));
+		const { canvas, imgData } = img;
+		ctx.drawImage(canvas, xx, yy);
+		if(name) {
+			const imgX = Math.floor(mouse.x - xx);
+			const imgY = Math.floor(mouse.y - yy);
+			if(0 <= imgX && imgX < canvas.width && 0 <= imgY && imgY < canvas.height && imgData.data[(imgX + imgY * canvas.width) * 4 + 3]>0) {
+				sceneData.hovered = name;
+			}
+		}
 	}
 
-	function renderRect(spriteDefinition, x, y, now) {
+	function renderRect(name, spriteDefinition, x, y, now) {
 		const { color, width, height, offsetX, offsetY } = spriteDefinition;
 		ctx.fillStyle = getValue(color) || 'black';
 		ctx.fillRect(x + getValue(offsetX), y + getValue(offsetY), getValue(width), getValue(height));
+		if(name) {
+			rendered.hovered = name;
+		}
 	}
 
 	function refresh() {

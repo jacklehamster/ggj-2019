@@ -28,6 +28,7 @@ const Game = function() {
 						do: [
 							{ set: ['lastClick.x', { get: 'mouse.x', clamp: [ { get:'limit.left'}, { get:'limit.right'} ] } ]},
 							{ set: ['lastClick.y', { get: 'mouse.y', clamp: [ { get:'limit.top'}, { get:'limit.bottom'} ] } ]},
+							{ set: ['lastClick.sprite', { get: 'hovered' } ]}
 						],
 					},
 					{ move: [ 'dude.x', { round: 'lastClick.x' }, { step: .5 } ] },
@@ -69,7 +70,7 @@ const Game = function() {
 					},
 					{ name: 'ball',
 						x: 32,
-						y: 98,
+						y: 95,
 					},
 				],
 			},
