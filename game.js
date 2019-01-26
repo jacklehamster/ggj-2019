@@ -24,6 +24,7 @@ const Game = function() {
 					{ set: ['limit.top', { get: 'ground.y'} ]},
 					{ set: ['limit.right', { add: [{ get: 'ground.x'}, { get: 'ground.width'}]} ]},
 					{ set: ['limit.bottom', { add: [{ get: 'ground.y'}, { get: 'ground.height'}]} ]},
+					{ set: ['destination', { get: 'person' }]},
 				],
 				actions: [
 					{
