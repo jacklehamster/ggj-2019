@@ -200,6 +200,10 @@ const Engine = function(document, Game) {
 		if(!sprite || !validateIf(sprite)) {
 			return;
 		}
+		if(sprite.group) {
+			getRenderedSprites(sprite.group, now, renderList);
+			return;
+		}
 		if(sprite.length) {
 			const sprites = sprite;
 			for(let i = 0; i < sprite.length; i++) {
@@ -280,18 +284,8 @@ const Engine = function(document, Game) {
 	}
 
 	function renderSprite(sprite, now, offsetX, offsetY) {
-		if(!validateIf(sprite)) {
-			return;
-		}
-		if(sprite.length) {
-			const sprites = sprite;
-			for(let i = 0; i < sprite.length; i++) {
-				renderSprite(sprites[i], now, offsetX, offsetY);
-			}
-			return;
-		}
-
-		const spriteDefinition = sprite.name ? stock[sprite.name] : sprite;
+		const name = getValue(sprite.name);
+		const spriteDefinition = name ? stock[name] : sprite;
 		if(spriteDefinition) {
 			const { type } = spriteDefinition;
 			switch(type) {
@@ -373,14 +367,15 @@ const Engine = function(document, Game) {
 	}
 
 	function getValue(obj) {
-		if(typeof(obj)!='object') {
+		if(!obj || typeof(obj)!='object') {
 			if(typeof(obj)==='undefined') {
 				return 0;
 			}
 			return obj;
 		}
 
-		if(obj.sprite) {
+		if(!validateIf(obj)) {
+			return 0;
 		}
 
 		let returnValue = obj;
