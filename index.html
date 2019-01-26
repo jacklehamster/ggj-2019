@@ -1,0 +1,24 @@
+<html>
+	<head>
+		<style>
+			canvas {  
+			  image-rendering: -moz-crisp-edges;
+			  image-rendering: -webkit-crisp-edges;
+			  image-rendering: pixelated;
+			  image-rendering: crisp-edges;
+			}
+		</style>
+	</head>
+	<script src="game.js"></script>
+	<script src="engine.js"></script>
+	<body style="margin: 0">
+		<div style="display: flex; flex-direction: row">
+			<canvas id="canvas"></canvas>
+			<pre id="debug"></pre>
+		</div>
+	</body>
+	<script>
+		Engine.setCanvas(document.getElementById('canvas'));
+		Engine.setDebug(document.getElementById('debug'));
+	</script>
+</html>
