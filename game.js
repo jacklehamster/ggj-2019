@@ -40,7 +40,8 @@ const Game = function() {
 			['front-door.png', 22, 85, null, null, null, { reverse: true } ],
 			['tv.png', 40, 62, null, -20, -62 ],
 			['fridge.png', 64, 64, null, null, null, null ],
-			['fridge-paper.png', null, null, null, null, null, { tip: 'note' }],			
+			['fridge-outlet.png', 16, 16, null, null, null, null ],
+			['fridge-paper.png', null, null, null, null, null, { tip: 'note' }],
 			['heater.png', 64, 64, null, null, null, null ],
 			['chair.png', 64, 64, null, null, null, null ],
 			['bed.png', 64, 64, null, null, null, null ],
@@ -312,6 +313,17 @@ const Game = function() {
 							flip: false,
 						},
 						dialog: "Your Automatic Nutritional Slurry Dispenser.  You are not hungry right now."
+					},
+					{
+						name: 'fridge-outlet.0',
+						x: 300,
+						y: 92,
+						walkSpot: {
+							x: 298,
+							y: 135,
+							flip: false,
+						},
+						dialog: "Your Slurry Dispenser's power cord.  It's protected against unplugging."
 					},
 					{
 						name: 'kitchen-counter',
