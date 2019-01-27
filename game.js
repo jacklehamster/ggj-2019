@@ -26,8 +26,8 @@ const Game = function() {
 			['fridge-paper.png', null, null, null, null, null, { tip: 'note' }],
 			['magnet.png', null, null, null, MAGNETXSHIFT, MAGNETYSHIFT],
 			['magnet-outline.png', null, null, null, MAGNETXSHIFT, MAGNETYSHIFT],
-			['dog-idle.png', 32, 25, null, -16, -25, { pingpong: true, tip: 'dog' } ],
-			['dog-run.png', 32, 25, null, -16, -25, { pingpong: true, tip: 'dog' } ],
+			['dog-idle.png', 32, 25, null, -16, -25, { pingpong: true, noHover: true } ],
+			['dog-run.png', 32, 25, null, -16, -25, { pingpong: true, noHover: true } ],
 			['house-face.png', 16, 16, null, -8, -30, { noHover: true} ],
 			['doorway.png', 34, 98, null, 0, -100, { noHover: true} ],
 			['front-door.png', 22, 85, null, null, null, { reverse: true } ],
@@ -50,9 +50,14 @@ const Game = function() {
 					{ set: ['destination.y', { get: 'person.y' }]},
 					{ set: ['dog', {x:180, y:170}] },
 					{ set: ['dog.cycle', [
-						{ x: 180, y: 170, time: 10000, flip:false },
-						{ x: 350, y: 160, time: 10000, flip: false },
+						{ x: 180, y: 170, time: 2000, flip:false },
+						{ x: 250, y: 165, time: 5000, flip:false },
+						{ x: 450, y: 160, time: 10000, flip: false },
 						{ x: 70, y: 150, time: 15000, flip:true },
+						{ x: 10, y: 130, time: 1000, flip:true },
+						{ x: -20, y: 130, time: 8000, flip:true },
+						{ x: 10, y: 130, time: 1000, flip:false },
+						{ x: 70, y: 145, time: 5000, flip:false },
 					]]},
 					{ set: ['dog.cycleIndex', 0 ]},
 				],
@@ -271,13 +276,13 @@ const Game = function() {
 
 					//tv face
 					{
-						if: { and: [{asc: [ 0, { get: 'person.x'}, 129 ]}, { not: { get: 'tv-down' } }] },
+						if: { and: [{asc: [ 0, { get: 'person.x'}, 130 ]}, { not: { get: 'tv-down' } }] },
 						name: 'house-face.1',
 						x: 163,
 						y: 133,
 					},
 					{
-						if: { and: [{asc: [ 130, { get: 'person.x'}, 199 ]}, { not: { get: 'tv-down' } }] },
+						if: { and: [{asc: [ 130, { get: 'person.x'}, 200 ]}, { not: { get: 'tv-down' } }] },
 						name: 'house-face.0',
 						x: 163,
 						y: 133,
@@ -291,13 +296,13 @@ const Game = function() {
 
 					//heater face
 					{
-						if: { and: [{asc: [ 0, { get: 'person.x'}, 449 ]}, { not: { get: 'heater-down' } }] },
+						if: { and: [{asc: [ 0, { get: 'person.x'}, 450 ]}, { not: { get: 'heater-down' } }] },
 						name: 'house-face.1',
 						x: 489,
 						y: 97,
 					},
 					{
-						if: { and: [{asc: [ 450, { get: 'person.x'}, 529 ]}, { not: { get: 'heater-down' } }] },
+						if: { and: [{asc: [ 450, { get: 'person.x'}, 530 ]}, { not: { get: 'heater-down' } }] },
 						name: 'house-face.0',
 						x: 489,
 						y: 97,
