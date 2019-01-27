@@ -86,6 +86,18 @@ const Engine = function(document, Game) {
 		return canvas;
 	}
 
+	function loadSound(src) {
+		const audio = new Audio();
+		audio.addEventListener('canplaythrough', e => {
+			const tag = src.split("/").pop().split(".").slice(0, -1).join("");
+			addStock(tag, {
+				type: 'audio',
+				audio,
+			});
+		});
+		audio.src = src;
+	}
+
 	function loadImage(src, width, height, count, offsetX, offsetY) {
 		const img = new Image();
 		img.addEventListener('load', e => {
@@ -192,12 +204,16 @@ const Engine = function(document, Game) {
 	}
 
 	function loadAssets(assets) {
-		assets.forEach(asset => {
-			if(asset[0].split(".").pop()==='png') {
+		assets.filter(asset => asset[0].split(".").pop()==='png')
+			.forEach(asset => {
 				const [ src, width, height, count, offsetX, offsetY ] = asset;
 				loadImage(src, width || 0, height || 0, count || 0, offsetX || 0, offsetY || 0);
-			}
-		});
+			});
+		assets.filter(asset => asset[0].split(".").pop()==='mp3')
+			.forEach(asset => {
+				const [ src ] = asset;
+				loadSound(src);
+			});
 	}
 
 	function clearCanvas() {
@@ -288,6 +304,13 @@ const Engine = function(document, Game) {
 				setValue(prop, Math.min(currentValue + step, goalValue));
 			} else if(currentValue > goalValue) {
 				setValue(prop, Math.max(currentValue - step, goalValue));
+			}
+		}
+		if(action.playSound) {
+			const name = getValue(action.playSound);
+			const audioDefinition = stock[name];
+			if(audioDefinition) {
+				audioDefinition.audio.play();
 			}
 		}
 	}
@@ -483,5 +506,6 @@ const Engine = function(document, Game) {
 		setDebug,
 		getValue,
 		setValue,
+		stock,
 	};
 }(document, Game);

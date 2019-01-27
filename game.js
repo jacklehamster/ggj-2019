@@ -16,6 +16,7 @@ const Game = function() {
 			['protag-idle.png', 48, 64, 0, -24, -60 ],
 			['protag-idle-carry.png', 48, 64, 0, -24, -60 ],
 			['protag-animation-walking.png', 48, 64, 0, -24, -60 ],
+			['beep.mp3'],
 		],
 		scenes: [
 			{
@@ -80,24 +81,26 @@ const Game = function() {
 						if: { get: 'onTarget' },
 						do: [
 							{ set: ['flip', { get:'destination.flip' } ] },
-							{ if: { get: 'destination.canPick' },
+							{ if: { get: 'destination.canPick', and: { equal: [ { get: 'picked'}, null ] } },
 								do: [
 									{ set: [ 'picked', { get: 'destination.sprite' } ] },
 									{ set: [ { add:[ { get: 'picked' }, '-gone' ] }, true ] },
+									{ playSound: 'beep' },
 								],
 							},
 							{ if: { equal: [{ get: 'destination.canDrop' }, { get:'picked'} ], and: { get:'picked' } },
 								do: [
 									{ set: [ { add:[ { get: 'picked' }, '-gone' ] }, false ] },
 									{ set: [ 'picked', null ] },
+									{ playSound: 'beep' },
 								],
 							},
 							{ 
-								if: { equal: [ {get: 'destination.canInteract.item'}, { get:'picked'} ] },
-								and: { get: 'picked' },
+								if: { equal: [ {get: 'destination.canInteract.item'}, { get:'picked'} ], and: { get: 'picked' } },
 								do: [
 									{ set: [ 'picked', null ] },
-									{ set: [ { get: 'destination.canInteract.result' }, true ]}
+									{ set: [ { get: 'destination.canInteract.result' }, true ]},
+									{ playSound: 'beep' },
 								],
 							},
 						],
