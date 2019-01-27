@@ -74,11 +74,11 @@ const Game = function() {
 						{ x: 180, y: 170, time: 2000, flip:false },
 						{ x: 250, y: 165, time: 5000, flip:false },
 						{ x: 450, y: 160, time: 10000, flip: false },
-						{ x: 70, y: 150, time: 15000, flip:true },
+						{ x: 70, y: 150, time: 14000, flip:true },
 						{ x: 70, y: 150, time: 3000, flip:true },
 						{ x: 50, y: 145, time: 1000, flip:true },
 						{ x: 10, y: 130, time: 1000, flip:true },
-						{ x: -20, y: 130, time: 8000, flip:true },
+						{ x: -20, y: 130, time: 10000, flip:true },
 						{ x: 10, y: 130, time: 3000, flip:false },
 						{ x: 30, y: 140, time: 1000, flip:false },
 						{ x: 70, y: 145, time: 1000, flip:false },
@@ -297,7 +297,7 @@ const Game = function() {
 						set: [ 'scroll', -240 ],
 					},
 					{
-						if: { and: [{asc: [ 110, { get: 'person.x' } ]}, {asc:[{get: 'dog.x'}, 100]}, {not:{ get: 'dogDoor.open' }}] },
+						if: { and: [{asc: [ 110, { get: 'person.x' } ]}, {asc:[10, {get: 'dog.x'}, 100]}, {not:{ get: 'dogDoor.open' }}] },
 						do : [
 							{ set: [ 'dogDoor.shut', 0 ] },
 							{ set: [ 'dogDoor.open', { get: 'now' } ] },
@@ -306,6 +306,14 @@ const Game = function() {
 					},
 					{
 						if: { and: [{asc: [ 120, { get: 'dog.x' } ]}, {not:{ get: 'dogDoor.shut' }}] },
+						do: [
+							{ set: [ 'dogDoor.shut', { get: 'now' } ] },
+							{ set: [ 'dogDoor.open', 0 ] },
+							{ playSound: 'door_whoosh' },
+						],
+					},
+					{
+						if: { and: [{asc: [ { get: 'dog.x' }, 9 ]}, {not:{ get: 'dogDoor.shut' }}] },
 						do: [
 							{ set: [ 'dogDoor.shut', { get: 'now' } ] },
 							{ set: [ 'dogDoor.open', 0 ] },
