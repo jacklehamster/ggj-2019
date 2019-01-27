@@ -26,6 +26,7 @@ const Game = function() {
 			['audio/power_down1.mp3', 0.5],
 			['audio/power_down2.mp3', 0.5],
 			['audio/power_down3.mp3', 0.5],
+			['audio/door_whoosh.mp3', 0.3],
 			['interior.png'],
 			['fridge-paper.png'],
 			['protag-idle.png', 48, 64, null, -24, -60, { tip: 'resident' } ],
@@ -298,6 +299,7 @@ const Game = function() {
 						do : [
 							{ set: [ 'dogDoor.shut', 0 ] },
 							{ set: [ 'dogDoor.open', { get: 'now' } ] },
+                            { playSound: 'door_whoosh' },
 						],
 					},
 					{
@@ -305,6 +307,7 @@ const Game = function() {
 						do: [
 							{ set: [ 'dogDoor.shut', { get: 'now' } ] },
 							{ set: [ 'dogDoor.open', 0 ] },
+                            { playSound: 'door_whoosh' },
 						],
 					},
 					{
