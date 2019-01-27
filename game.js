@@ -24,6 +24,7 @@ const Game = function() {
 			['audio/beep.mp3', 0.5],
 			['audio/blorng.mp3', 0.5],
 			['audio/soothing_tones_for_home1.mp3', 0.3, { loop: true}],
+			['audio/soothing_tones_for_home2.mp3', 0.3, { loop: true}],
 			['audio/power_charge.mp3'],
 			['audio/power_down1.mp3'],
 			['audio/power_down2.mp3'],
