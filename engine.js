@@ -33,11 +33,13 @@ const Engine = function(document, Game) {
 
 	function onNewFrame() {
 		sceneData.hovered = null;
-		const diff = (sceneData.scroll - visualScroll);
-		if(Math.abs(diff) < .1) {
+		const diff = sceneData.scroll - visualScroll;
+		if(Math.abs(diff) < 1) {
 			visualScroll = sceneData.scroll;
+			sceneData.notScrolling = true;
 		} else {
 			visualScroll += diff / 10;
+			sceneData.notScrolling = false;
 		}
 	}
 
@@ -98,7 +100,7 @@ const Engine = function(document, Game) {
 		audio.src = src;
 	}
 
-	function loadImage(src, width, height, count, offsetX, offsetY) {
+	function loadImage(src, width, height, count, offsetX, offsetY, option) {
 		const img = new Image();
 		img.addEventListener('load', e => {
 			const { naturalWidth, naturalHeight } = img;
@@ -117,6 +119,11 @@ const Engine = function(document, Game) {
 			const sprites = [];
 			for(let y=0; y<rows; y++) {
 				for(let x=0; x<cols; x++) {
+					const index = y * cols + x;
+					if(index >= count) {
+						continue;
+					}
+
 					const cropWidth = Math.min(width, naturalWidth - x * width + 1);
 					const cropHeight = Math.min(height, naturalHeight - y * height + 1);
 					const canvas = document.createElement('canvas');
@@ -136,10 +143,6 @@ const Engine = function(document, Game) {
 						img, x * width, y * height, cropWidth, cropHeight, 0, 0, cropWidth, cropHeight,
 					);
 					flipCtx.setTransform(1, 0, 0, 1, 0, 0);
-
-					const index = y * cols + x;
-
-					const subTag = tag + "." + index;
 					sprite = {
 						type: 'img',
 						images: [{
@@ -150,6 +153,17 @@ const Engine = function(document, Game) {
 						}],
 						offsetX,
 						offsetY,
+					};
+					sprites.push(addStock(`${tag}.${index}`, sprite));
+				}
+			}
+			if(option && option.pingpong) {
+				const totalCount = count * 2 - 1;
+				for(let i = 0; i < totalCount - count; i++) {
+					const index = count + i;
+					const { type, images, offsetX, offsetY } = sprites[count - i - 1];
+					const sprite = {
+						type, images, offsetX, offsetY,
 					};
 					sprites.push(addStock(`${tag}.${index}`, sprite));
 				}
@@ -206,8 +220,8 @@ const Engine = function(document, Game) {
 	function loadAssets(assets) {
 		assets.filter(asset => asset[0].split(".").pop()==='png')
 			.forEach(asset => {
-				const [ src, width, height, count, offsetX, offsetY ] = asset;
-				loadImage(src, width || 0, height || 0, count || 0, offsetX || 0, offsetY || 0);
+				const [ src, width, height, count, offsetX, offsetY, option ] = asset;
+				loadImage(src, width || 0, height || 0, count || 0, offsetX || 0, offsetY || 0, option);
 			});
 		assets.filter(asset => asset[0].split(".").pop()==='mp3')
 			.forEach(asset => {
@@ -386,15 +400,22 @@ const Engine = function(document, Game) {
 		return value;		
 	}
 
+	function performSub(elements) {
+		let value = getValue(elements[0]);
+		for(let i=1; i<elements.length; i++) {
+			value -= getValue(elements[i]);
+		}
+		return value;		
+	}
+
 	function checkSorted(elements, desc) {
-		const first = getValue(elements[0]);
 		for(let i=1; i<elements.length; i++) {
 			if(desc) {
-				if(first < getValue(elements[i])) {
+				if(getValue(elements[i-1]) < getValue(elements[i])) {
 					return false;
 				}
 			} else {
-				if(first > getValue(elements[i])) {
+				if(getValue(elements[i-1]) > getValue(elements[i])) {
 					return false;
 				}
 			}
@@ -426,6 +447,9 @@ const Engine = function(document, Game) {
 		}
 		if(obj.add) {
 			returnValue = performAdd(obj.add);
+		}
+		if(obj.subtract) {
+			returnValue = performSub(obj.subtract);
 		}
 
 		const property = obj.get || obj.floor || obj.round;
@@ -477,7 +501,13 @@ const Engine = function(document, Game) {
 	function renderRect(sprite, spriteDefinition, x, y, now) {
 		const { color, width, height, offsetX, offsetY } = spriteDefinition;
 		ctx.fillStyle = getValue(color) || 'black';
+		if(sprite.alpha) {
+			ctx.globalAlpha = sprite.alpha;
+		}
 		ctx.fillRect(x + getValue(offsetX) + Math.round(visualScroll), y + getValue(offsetY), getValue(width), getValue(height));
+		if(sprite.alpha) {
+			ctx.globalAlpha = 1;
+		}
 		if(sprite && sprite.name) {
 			sceneData.hovered = sprite;
 		}
