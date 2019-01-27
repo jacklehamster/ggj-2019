@@ -300,7 +300,7 @@ const Game = function() {
 						do : [
 							{ set: [ 'dogDoor.shut', 0 ] },
 							{ set: [ 'dogDoor.open', { get: 'now' } ] },
-                            { playSound: 'door_whoosh' },
+ 							{ playSound: 'door_whoosh' },
 						],
 					},
 					{
@@ -308,7 +308,7 @@ const Game = function() {
 						do: [
 							{ set: [ 'dogDoor.shut', { get: 'now' } ] },
 							{ set: [ 'dogDoor.open', 0 ] },
-                            { playSound: 'door_whoosh' },
+							{ playSound: 'door_whoosh' },
 						],
 					},
 					{
@@ -316,6 +316,7 @@ const Game = function() {
 						do: [
 							{ set: [ 'dogDoor.shut', { get: 'now' } ] },
 							{ set: [ 'dogDoor.open', 0 ] },
+ 							{ playSound: 'door_whoosh' },
 						],
 					},
                     {
