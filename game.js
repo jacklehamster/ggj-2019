@@ -25,10 +25,10 @@ const Game = function() {
 			['audio/blorng.mp3', 0.5],
 			['audio/soothing_tones_for_home1.mp3', 0.3, { loop: true}],
 			['audio/soothing_tones_for_home2.mp3', 0.3, { loop: true}],
-			['audio/power_charge.mp3'],
-			['audio/power_down1.mp3'],
-			['audio/power_down2.mp3'],
-			['audio/power_down3.mp3'],
+			['audio/power_charge.mp3', 0.5],
+			['audio/power_down1.mp3', 0.5],
+			['audio/power_down2.mp3', 0.5],
+			['audio/power_down3.mp3', 0.5],
 			['interior.png'],
 			['fridge-paper.png'],
 			['protag-idle.png', 48, 64, null, -24, -60, { noHover: true}  ],
@@ -269,6 +269,14 @@ const Game = function() {
 							{ set: [ 'dogDoor.open', 0 ] },
 						],
 					},
+                    {
+						if: { and: [{not: { get: 'music.playing' }}, { get: 'music.playable'}] },
+                        do: [
+                            { set: [ 'music.playing', true ] },
+                            { playSound: 'soothing_tones_for_home2' },
+                            { log: 'playing music' },
+                        ],
+                    },
 				],
 				sprites: [
 					{

@@ -15,11 +15,13 @@ const Engine = function(document, Game) {
 	let sceneTime = 0;
 
 	let visualScroll = 0;
+    const music = { playing: false, playable: false };
 	let sceneData = {
 		mouse,
 		scroll: 0,
 		debug,
 		now: 0,
+        music,
 	};
 
 	let debugDiv = null;
@@ -30,6 +32,7 @@ const Engine = function(document, Game) {
 			scroll: 0,
 			debug,
 			now: 0,
+            music,
 		};
 		sceneTime = new Date().getTime();
 		if(scene.init) {
@@ -105,6 +108,9 @@ const Engine = function(document, Game) {
             }
             if(!vol) {
                 vol = 0.5;
+            }
+            if (tag == "soothing_tones_for_home2"){
+                sceneData.music.playable = true;
             }
             audio.volume = vol;
             audio.loop = loop;
@@ -353,7 +359,7 @@ const Engine = function(document, Game) {
 			const audioDefinition = stock[name];
 			if(audioDefinition) {
 				audioDefinition.audio.play();
-			}
+            }
 		}
 	}
 
