@@ -18,10 +18,22 @@ const Game = function() {
 			['ball.png', 32, 32, null, -16, -31 ],
 			['ball-empty.png', 32, 32, null, -16, -31 + BALLYSHIFT ],
 			['ball-deflate.png', 32, 32, null, -16, -32 ],
+			['protag-idle.png', 48, 64, null, -24, -60 ],
+			['protag-idle-carry.png', 48, 64, null, -24, -60 ],
+			['protag-animation-walking.png', 48, 64, null, -24, -60 ],
+			['audio/beep.mp3', 0.5],
+			['audio/blorng.mp3', 0.5],
+			['audio/soothing_tones_for_home1.mp3', 0.3, { loop: true}],
+			['audio/soothing_tones_for_home2.mp3', 0.3, { loop: true}],
+			['audio/power_charge.mp3'],
+			['audio/power_down1.mp3'],
+			['audio/power_down2.mp3'],
+			['audio/power_down3.mp3'],
+			['interior.png'],
+			['fridge-paper.png'],
 			['protag-idle.png', 48, 64, null, -24, -60, { noHover: true}  ],
 			['protag-idle-carry.png', 48, 64, null, -24, -60, { noHover: true}  ],
 			['protag-animation-walking.png', 48, 64, null, -24, -60, { noHover: true}  ],
-			['blorng.mp3'],
 			['interior.png', null, null, null, null, null, { noHover: true }],
 			['fridge-paper.png', null, null, null, null, null, { tip: 'note' }],
 			['magnet.png', null, null, null, MAGNETXSHIFT, MAGNETYSHIFT],
@@ -32,7 +44,13 @@ const Game = function() {
 			['doorway.png', 34, 98, null, 0, -100, { noHover: true} ],
 			['front-door.png', 22, 85, null, null, null, { reverse: true } ],
 			['tv.png', 40, 62, null, -20, -62 ],
-			['fridge.png', 64, 64, null, null, null, null ]
+			['fridge.png', 64, 64, null, null, null, null ],
+			['heater.png', 64, 64, null, null, null, null ],
+			['chair.png', 64, 64, null, null, null, null ],
+			['bed.png', 64, 64, null, null, null, null ],
+			['wardrobe.png', 64, 80, null, null, null, null ],
+			['air-conditioner.png', 64, 64, null, null, null, null ],
+			['kitchen-counter.png', 72, 32, null, null, null, null ]
 		],
 		scenes: [
 			{
@@ -208,7 +226,7 @@ const Game = function() {
 								do: [
 									{ set: [ { add:[ { get: 'picked' }, '-gone' ] }, false ] },
 									{ set: [ 'picked', null ] },
-									{ playSound: 'blorng' },
+									{ playSound: 'beep' },
 								],
 							},
 							{ 
@@ -216,7 +234,7 @@ const Game = function() {
 								do: [
 									{ set: [ 'picked', null ] },
 									{ set: [ { get: 'destination.canInteract.result' }, true ]},
-									{ playSound: 'blorng' },
+									{ playSound: 'soothing_tones_for_home1' },
 								],
 							},
 							{ 
@@ -275,6 +293,36 @@ const Game = function() {
 							y: 135,
 							flip: false,
 						},
+					},
+					{
+						name: 'kitchen-counter',
+						x: 230,
+						y: 95,
+					},
+					{
+						name: 'heater',
+						x: 458,
+						y: 59,
+					},
+					{
+						name: 'chair',
+						x: 58,
+						y: 77,
+					},
+					{
+						name: 'bed',
+						x: 527,
+						y: 95,
+					},
+					{
+						name: 'wardrobe',
+						x: 407,
+						y: 34,
+					},
+					{
+						name: 'air-conditioner',
+						x: 105,
+						y: 55,
 					},
 					{
 						if: { get: 'dogDoor.open' },
