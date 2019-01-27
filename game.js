@@ -42,6 +42,7 @@ const Game = function() {
 			['doorway.png', 34, 98, null, 0, -100, { noHover: true} ],
 			['front-door.png', 22, 85, null, null, null, { reverse: true } ],
 			['tv.png', 40, 62, null, -20, -62 ],
+			['tv-busted.png', 40, 62, 3, -20, -62 ],
 			['fridge.png', 64, 64, null, null, null, null ],
 			['fridge-outlet.png', 16, 16, null, null, null, null ],
 			['fridge-outlet-busted.png', 16, 32, 6, null, -16, null ],
@@ -454,6 +455,7 @@ const Game = function() {
 						y: 159,
 					},
 					{
+						ifnot:{get:'tv-down'},
 						name: 'tv',
 						x: 166,
 						y: 132,
@@ -469,11 +471,29 @@ const Game = function() {
 						dialog: 'Your Emotion Controlled Television.  No need to flip through channels, I will pick something that suits your mood.',
 					},
 					{
+						if:{get:'tv-down'},
+						name: 'tv-busted',
+						x: 166,
+						y: 132,
+						walkSpot: {
+							x: 166 - 25,
+							y: 132 + 5,
+							flip: false,
+						},
+						dialog: '...',
+					},
+					{
 						name: 'doorway',
 						x: 360,
 						y: 175,
 					},
 					//fridge-face
+					{
+						if: { get: 'fridge-down' } ,
+						name: 'house-face.3',
+						x: 333,
+						y: 109,
+					},
 					{
 						if: { and: [{asc: [ 0, { get: 'person.x'}, 300 ]}, { not: { get: 'fridge-down' } }] },
 						name: 'house-face.1',
