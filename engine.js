@@ -483,6 +483,12 @@ const Engine = function(document, Game) {
 		return true;
 	}
 
+	function progressive(text, time) {
+		const string = getValue(text);
+		const timeShown = getValue(time);
+		return string ? string.slice(0, Math.ceil(timeShown / 50)) : '';
+	}
+
 	function getValue(obj, context) {
 		if(!obj || typeof(obj)!='object') {
 			if(typeof(obj)==='undefined') {
@@ -514,6 +520,9 @@ const Engine = function(document, Game) {
 		if(obj.mod) {
 			const modVal = getValue(obj.mod[1], context);
 			returnValue = (getValue(obj.mod[0], context) + modVal) % modVal;
+		}
+		if(obj.progressive) {
+			returnValue = progressive(obj.progressive[0], obj.progressive[1]);
 		}
 
 		const property = obj.get || obj.floor || obj.round || obj.tip;
