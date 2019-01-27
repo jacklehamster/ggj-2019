@@ -44,6 +44,7 @@ const Game = function() {
 			['tv.png', 40, 62, null, -20, -62 ],
 			['fridge.png', 64, 64, null, null, null, null ],
 			['fridge-outlet.png', 16, 16, null, null, null, null ],
+			['fridge-outlet-busted.png', 16, 32, 6, null, -16, null ],
 			['fridge-paper.png', null, null, null, null, null, { tip: 'note' }],
 			['heater.png', 64, 64, null, null, null, null ],
 			['chair.png', 64, 64, null, null, null, null ],
@@ -357,7 +358,7 @@ const Game = function() {
 					},
 					{
 						if: { get: 'fridge-down' },
-						name: 'fridge-outlet.1',
+						name: 'fridge-outlet-busted',
 						x: 300,
 						y: 92,
 						walkSpot: {
