@@ -27,10 +27,10 @@ const Game = function() {
 			['magnet-outline.png', null, null, null, MAGNETXSHIFT, MAGNETYSHIFT],
 			['dog-idle.png', 32, 25, null, -16, -25, { pingpong: true } ],
 			['dog-run.png', 32, 25, null, -16, -25, { pingpong: true } ],
-			['house-face.png', 16, 16 ],
+			['house-face.png', 16, 16, null, -8, -30 ],
 			['doorway.png', 34, 98, null, 0, -100 ],
 			['front-door.png', 22, 85, null, null, null, { reverse: true } ],
-			['tv.png']
+			['tv.png', 40, 62, null, -20, -62 ]
 		],
 		scenes: [
 			{
@@ -146,8 +146,17 @@ const Game = function() {
 					},
 					{
 						name: 'tv',
-						x: 146,
-						y: 70,
+						x: 166,
+						y: 132,
+						walkSpot: {
+							x: 166 - 20,
+							y: 132 + 5,
+							flip: false,
+						},
+						canInteract: {
+							item: 'magnet',
+							result: 'tv-down',
+						},						
 					},
 					{
 						name: 'doorway',
@@ -155,22 +164,22 @@ const Game = function() {
 						y: 175,
 					},
 					{
-						if: { asc: [ 0, { get: 'person.x'}, 129 ] },
+						if: { asc: [ 0, { get: 'person.x'}, 129 ], and: { not: { get: 'tv-down' } } },
 						name: 'house-face.1',
-						x: 155,
-						y: 103,
+						x: 163,
+						y: 133,
 					},
 					{
-						if: { asc: [ 130, { get: 'person.x'}, 200 ] },
+						if: { asc: [ 130, { get: 'person.x'}, 200 ], and: { not: { get: 'tv-down' } } },
 						name: 'house-face.0',
-						x: 155,
-						y: 103,
+						x: 163,
+						y: 133,
 					},
 					{
-						if: { asc: [ 200, { get: 'person.x'} ] },
+						if: { asc: [ 200, { get: 'person.x'} ], and: { not: { get: 'tv-down' } } },
 						name: 'house-face.2',
-						x: 155,
-						y: 103,
+						x: 163,
+						y: 133,
 					},
 					{ type: 'rect',
 						if: { get: 'debug' },
@@ -311,10 +320,6 @@ const Game = function() {
 					// 		x: SPIKE_X - 10,
 					// 		y: SPIKE_Y + 5,
 					// 		flip: false,
-					// 	},
-					// 	canInteract: {
-					// 		item: 'ball',
-					// 		result: 'ball-deflated',
 					// 	},
 					// },
 				],

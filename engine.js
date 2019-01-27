@@ -469,6 +469,9 @@ const Engine = function(document, Game) {
 		if(property) {
 			returnValue = getPropValue(property);
 		}
+		if(obj.not) {
+			returnValue = !getValue(obj.not);
+		}
 		if(obj.and) {
 			returnValue = returnValue && getValue(obj.and);
 		}
