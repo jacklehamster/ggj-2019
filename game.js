@@ -51,7 +51,7 @@ const Game = function() {
 			['wardrobe.png', 64, 80, null, null, null, null ],
 			['hanging-shirt.png', 32, 32, null, null, null, null ],
 			['air-conditioner.png', 64, 64, null, null, null, null ],
-			['kitchen-counter.png', 72, 32, null, null, null, null ],
+			['kitchen-counter.png', 90, 48, null, null, null, null ],
 			['front-door-overlay.png', 64, 144, null, 0, -128, { noHover: true} ]
 		],
 		scenes: [
@@ -379,8 +379,8 @@ const Game = function() {
 					},
 					{
 						name: 'kitchen-counter',
-						x: 230,
-						y: 95,
+						x: 215,
+						y: 83,
 						walkSpot: {
 							x: 230,
 							y: 135,
