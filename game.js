@@ -86,7 +86,7 @@ const Game = function() {
 									{ set: [ { add:[ { get: 'picked' }, '-gone' ] }, true ] },
 								],
 							},
-							{ if: { equal: [{ get: 'destination.canDrop' }, { get:'picked'} ] },
+							{ if: { equal: [{ get: 'destination.canDrop' }, { get:'picked'} ], and: { get:'picked' } },
 								do: [
 									{ set: [ { add:[ { get: 'picked' }, '-gone' ] }, false ] },
 									{ set: [ 'picked', null ] },
