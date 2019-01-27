@@ -30,7 +30,8 @@ const Game = function() {
 			['house-face.png', 16, 16, null, -8, -30 ],
 			['doorway.png', 34, 98, null, 0, -100 ],
 			['front-door.png', 22, 85, null, null, null, { reverse: true } ],
-			['tv.png', 40, 62, null, -20, -62 ]
+			['tv.png', 40, 62, null, -20, -62 ],
+			['fridge.png', 64, 64, null, null, null, null ]
 		],
 		scenes: [
 			{
@@ -138,10 +139,16 @@ const Game = function() {
 						x: 0,
 						y: 0,
 					},
+
+					{
+						name: 'fridge',
+						x: 298,
+						y: 62,
+					},
 					{
 						name: 'front-door.reverse',
 						x: 29,
-						y: 71,
+						y: 70,
 						repeat: 1,
 					},
 					{
@@ -163,6 +170,27 @@ const Game = function() {
 						x: 360,
 						y: 175,
 					},
+					//fridge-face
+					{
+						if: { asc: [ 0, { get: 'person.x'}, 300 ], and: { not: { get: 'fridge-down' } } },
+						name: 'house-face.1',
+						x: 333,
+						y: 109,
+					},
+					{
+						if: { asc: [ 300, { get: 'person.x'}, 360 ], and: { not: { get: 'fridge-down' } } },
+						name: 'house-face.0',
+						x: 333,
+						y: 109,
+					},
+					{
+						if: { asc: [ 360, { get: 'person.x'} ], and: { not: { get: 'fridge-down' } } },
+						name: 'house-face.2',
+						x: 333,
+						y: 109,
+					},
+
+					//tv face
 					{
 						if: { asc: [ 0, { get: 'person.x'}, 129 ], and: { not: { get: 'tv-down' } } },
 						name: 'house-face.1',
