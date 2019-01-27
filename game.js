@@ -30,6 +30,7 @@ const Game = function() {
 			['house-face.png', 16, 16 ],
 			['doorway.png', 34, 98, null, 0, -100 ],
 			['front-door.png', 22, 85, null, null, null, { reverse: true } ],
+			['tv.png']
 		],
 		scenes: [
 			{
@@ -142,6 +143,11 @@ const Game = function() {
 						x: 29,
 						y: 71,
 						repeat: 1,
+					},
+					{
+						name: 'tv',
+						x: 146,
+						y: 70,
 					},
 					{
 						name: 'doorway',
