@@ -256,7 +256,7 @@ const Engine = function(document, Game) {
 			renderAction(action.do, now);
 		}
 		if(action.log) {
-			console.log(action);
+			console.log(getValue(action.log));
 		}
 		if(action.set) {
 			const [ prop, value ] = action.set;
@@ -272,7 +272,7 @@ const Engine = function(document, Game) {
 		}
 		if(action.move) {
 			const [ prop, to, options ] = action.move;
-			const step = options ? options.step||1 : 1;
+			const step = options ? getValue(options.step)||1 : 1;
 			const currentValue = getPropValue(prop);
 			const goalValue = getValue(to);
 			if(currentValue < goalValue) {
@@ -306,7 +306,11 @@ const Engine = function(document, Game) {
 	}
 
 	function setValue(prop, obj, defaultValue) {
-		const props = prop.split('.');
+		const property = getValue(prop);
+		if(!property) {
+			return;
+		}
+		const props = property.split('.');
 		let o = sceneData, lastProp = props.pop();
 		for(let i=0; i<props.length; i++) {
 			if(!o[props[i]]) {
