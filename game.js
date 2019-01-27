@@ -31,7 +31,8 @@ const Game = function() {
 			['doorway.png', 34, 98, null, 0, -100 ],
 			['front-door.png', 22, 85, null, null, null, { reverse: true } ],
 			['tv.png', 40, 62, null, -20, -62 ],
-			['fridge.png', 64, 64, null, null, null, null ]
+			['fridge.png', 64, 64, null, null, null, null ],
+			['heater.png', 64, 64, null, null, null, null]
 		],
 		scenes: [
 			{
@@ -144,6 +145,11 @@ const Game = function() {
 						name: 'fridge',
 						x: 298,
 						y: 62,
+					},
+					{
+						name: 'heater',
+						x: 460,
+						y: 58,
 					},
 					{
 						name: 'front-door.reverse',
