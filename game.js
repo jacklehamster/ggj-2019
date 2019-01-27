@@ -450,7 +450,7 @@ const Game = function() {
 						animationStart: { get: 'dogDoor.shut' },
 					},
 					{
-						name: 'front-door-overlay',
+						name: 'front-door-overlay.0',
 						x: 0,
 						y: 159,
 					},
