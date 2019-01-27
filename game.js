@@ -42,6 +42,7 @@ const Game = function() {
 			['doorway.png', 34, 98, null, 0, -100, { noHover: true} ],
 			['front-door.png', 22, 85, null, null, null, { reverse: true } ],
 			['tv.png', 40, 62, null, -20, -62 ],
+			['tv-busted.png', 40, 62, 3, -20, -62 ],
 			['fridge.png', 64, 64, null, null, null, null ],
 			['fridge-outlet.png', 16, 16, null, null, null, null ],
 			['fridge-outlet-busted.png', 16, 32, 6, null, -16, null ],
@@ -50,6 +51,7 @@ const Game = function() {
 			['chair.png', 64, 64, null, null, null, null ],
 			['bed.png', 64, 64, null, null, null, null ],
 			['wardrobe.png', 64, 80, null, null, null, null ],
+			['hanging-shirt.png', 32, 32, null, null, null, null ],
 			['air-conditioner.png', 64, 64, null, null, null, null ],
 			['kitchen-counter.png', 72, 32, null, null, null, null ],
 			['front-door-overlay.png', 64, 144, null, 0, -128, { noHover: true} ]
@@ -135,8 +137,7 @@ const Game = function() {
 								do: [
 									{set:['dog.cycleIndex', 1]},
 									{set: ['fridge-down', {get:'now'} ]},
-                                    {playSound: 'power_down3'},
-									
+ 									{playSound: 'power_down3'},
 								],
 							},
 						],
@@ -410,6 +411,26 @@ const Game = function() {
 						y: 34,
 					},
 					{
+						name: 'hanging-shirt',
+						x: 407,
+						y: 53,
+					},
+					{
+						name: 'hanging-shirt',
+						x: 417,
+						y: 53,
+					},
+					{
+						name: 'hanging-shirt',
+						x: 427,
+						y: 53,
+					},
+						{
+						name: 'hanging-shirt',
+						x: 437,
+						y: 53,
+					},
+					{
 						name: 'air-conditioner',
 						x: 105,
 						y: 55,
@@ -436,6 +457,7 @@ const Game = function() {
 						y: 159,
 					},
 					{
+						ifnot:{get:'tv-down'},
 						name: 'tv',
 						x: 166,
 						y: 132,
@@ -451,11 +473,29 @@ const Game = function() {
 						dialog: 'Your Emotion Controlled Television. No need to flip around,\na show will be selected that best suits your mood.',
 					},
 					{
+						if:{get:'tv-down'},
+						name: 'tv-busted',
+						x: 166,
+						y: 132,
+						walkSpot: {
+							x: 166 - 25,
+							y: 132 + 5,
+							flip: false,
+						},
+						dialog: '...',
+					},
+					{
 						name: 'doorway',
 						x: 360,
 						y: 175,
 					},
 					//fridge-face
+					{
+						if: { get: 'fridge-down' } ,
+						name: 'house-face.3',
+						x: 333,
+						y: 109,
+					},
 					{
 						if: { and: [{asc: [ 0, { get: 'person.x'}, 300 ]}, { not: { get: 'fridge-down' } }] },
 						name: 'house-face.1',
