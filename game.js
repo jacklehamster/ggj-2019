@@ -27,8 +27,6 @@ const Game = function() {
 			['audio/power_down2.mp3', 0.5],
 			['audio/power_down3.mp3', 0.5],
 			['audio/door_whoosh.mp3', 0.3],
-			['interior.png'],
-			['fridge-paper.png'],
 			['protag-idle.png', 48, 64, null, -24, -60, { tip: 'resident' } ],
 			['protag-idle-carry.png', 48, 64, null, -24, -60, { tip: 'resident' } ],
 			['protag-animation-carrying.png', 48, 64, 0, -24, -60, { tip: 'resident'} ],
@@ -75,11 +73,11 @@ const Game = function() {
 						{ x: 180, y: 170, time: 2000, flip:false },
 						{ x: 250, y: 165, time: 5000, flip:false },
 						{ x: 450, y: 160, time: 10000, flip: false },
-						{ x: 70, y: 150, time: 15000, flip:true },
+						{ x: 70, y: 150, time: 14000, flip:true },
 						{ x: 70, y: 150, time: 3000, flip:true },
 						{ x: 50, y: 145, time: 1000, flip:true },
 						{ x: 10, y: 130, time: 1000, flip:true },
-						{ x: -20, y: 130, time: 8000, flip:true },
+						{ x: -20, y: 130, time: 10000, flip:true },
 						{ x: 10, y: 130, time: 3000, flip:false },
 						{ x: 30, y: 140, time: 1000, flip:false },
 						{ x: 70, y: 145, time: 1000, flip:false },
@@ -137,7 +135,7 @@ const Game = function() {
 								do: [
 									{set:['dog.cycleIndex', 1]},
 									{set: ['fridge-down', {get:'now'} ]},
-
+ 									{playSound: 'power_down3'},
 								],
 							},
 						],
@@ -298,7 +296,7 @@ const Game = function() {
 						set: [ 'scroll', -240 ],
 					},
 					{
-						if: { and: [{asc: [ 110, { get: 'person.x' } ]}, {asc:[{get: 'dog.x'}, 100]}, {not:{ get: 'dogDoor.open' }}] },
+						if: { and: [{asc: [ 110, { get: 'person.x' } ]}, {asc:[10, {get: 'dog.x'}, 100]}, {not:{ get: 'dogDoor.open' }}] },
 						do : [
 							{ set: [ 'dogDoor.shut', 0 ] },
 							{ set: [ 'dogDoor.open', { get: 'now' } ] },
@@ -307,6 +305,14 @@ const Game = function() {
 					},
 					{
 						if: { and: [{asc: [ 120, { get: 'dog.x' } ]}, {not:{ get: 'dogDoor.shut' }}] },
+						do: [
+							{ set: [ 'dogDoor.shut', { get: 'now' } ] },
+							{ set: [ 'dogDoor.open', 0 ] },
+							{ playSound: 'door_whoosh' },
+						],
+					},
+					{
+						if: { and: [{asc: [ { get: 'dog.x' }, 9 ]}, {not:{ get: 'dogDoor.shut' }}] },
 						do: [
 							{ set: [ 'dogDoor.shut', { get: 'now' } ] },
 							{ set: [ 'dogDoor.open', 0 ] },
@@ -345,7 +351,7 @@ const Game = function() {
 							y: 135,
 							flip: false,
 						},
-						dialog: "Your Automatic Nutritional Slurry Dispenser.  You are not hungry right now."
+						dialog: "Your Automatic Nutritional Slurry Dispenser. \nYou are not hungry right now."
 					},
 					{
 						ifnot: { get: 'fridge-down' },
@@ -357,7 +363,7 @@ const Game = function() {
 							y: 135,
 							flip: false,
 						},
-						dialog: "Your Slurry Dispenser's power cord.  It's protected against unplugging."
+						dialog: "Your Slurry Dispenser's power cord. \nIt's protected against unplugging."
 					},
 					{
 						if: { get: 'fridge-down' },
@@ -380,12 +386,13 @@ const Game = function() {
 							y: 135,
 							flip: false,
 						},
-						dialog: "This kitchen counter is for decoration only.  I will dispense slurries you need directly into the Refrigerator"
+						dialog: "This kitchen counter is for decoration only. \nI will dispense slurries you need directly into the Refrigerator"
 					},
 					{
 						name: 'heater',
 						x: 458,
 						y: 59,
+						dialog: "Your Auto-Thermo-Regulator 3000. \n It automatically adjusts the ambient temperature based on your comfort."
 					},
 					{
 						name: 'chair',
@@ -396,12 +403,13 @@ const Game = function() {
 							y: 140,
 							flip: false,
 						},
-						dialog: "Please, take a seat.  You have no reason to get up as I take care of your needs."
+						dialog: "Please, sit in your ComFy Throne recliner and waste disposal system.\nYou have no reason to get up, your home will take care of all your needs."
 					},
 					{
 						name: 'bed',
 						x: 527,
 						y: 95,
+						dialog: "An archaic sleeping device used by Residents of a primitive past.\nYou can rest yourself at anytime on your ComFy Throne."
 					},
 					{
 						name: 'wardrobe',
@@ -468,7 +476,7 @@ const Game = function() {
 							item: 'magnet',
 							result: 'tv-down',
 						},
-						dialog: 'Your Emotion Controlled Television.  No need to flip through channels, I will pick something that suits your mood.',
+						dialog: 'Your Emotion Controlled Television. No need to flip around,\na show will be selected that best suits your mood.',
 					},
 					{
 						if:{get:'tv-down'},
