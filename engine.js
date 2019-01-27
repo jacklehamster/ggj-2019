@@ -13,8 +13,10 @@ const Engine = function(document, Game) {
 	const mouse = { x:0, y:0, down:false };
 	let sceneTime = 0;
 
+	let visualScroll = 0;
 	let sceneData = {
 		mouse,
+		scroll: 0,
 	};
 
 	let debugDiv = null;
@@ -22,6 +24,7 @@ const Engine = function(document, Game) {
 	function onNewScene() {
 		sceneData = {
 			mouse,
+			scroll: 0,
 		};
 		if(scene.init) {
 			scene.init.forEach(action => renderAction(action, 0));
@@ -30,6 +33,12 @@ const Engine = function(document, Game) {
 
 	function onNewFrame() {
 		sceneData.hovered = null;
+		const diff = (sceneData.scroll - visualScroll);
+		if(Math.abs(diff) < .1) {
+			visualScroll = sceneData.scroll;
+		} else {
+			visualScroll += diff / 10;
+		}
 	}
 
 	function setCanvas(canvas) {
@@ -424,7 +433,7 @@ const Engine = function(document, Game) {
 		const { images, offsetX, offsetY } = spriteDefinition;
 		const frame = Math.floor(now / 1000 * spriteFrameRate);
 		const img = images[frame % images.length];
-		const xx = Math.floor(x + getValue(offsetX));
+		const xx = Math.floor(x + getValue(offsetX)) + Math.round(visualScroll);
 		const yy = Math.floor(y + getValue(offsetY));
 		const { canvas, imgData, flipCanvas, flipImgData } = img;
 		const shouldFlip = getValue(sprite.flip);
@@ -445,7 +454,7 @@ const Engine = function(document, Game) {
 	function renderRect(sprite, spriteDefinition, x, y, now) {
 		const { color, width, height, offsetX, offsetY } = spriteDefinition;
 		ctx.fillStyle = getValue(color) || 'black';
-		ctx.fillRect(x + getValue(offsetX), y + getValue(offsetY), getValue(width), getValue(height));
+		ctx.fillRect(x + getValue(offsetX) + Math.round(visualScroll), y + getValue(offsetY), getValue(width), getValue(height));
 		if(sprite && sprite.name) {
 			sceneData.hovered = sprite;
 		}
@@ -473,5 +482,6 @@ const Engine = function(document, Game) {
 		setCanvas,
 		setDebug,
 		getValue,
+		setValue,
 	};
 }(document, Game);

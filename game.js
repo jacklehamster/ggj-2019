@@ -3,7 +3,7 @@ const Game = function() {
 	const BALL_X = 32, BALL_Y = 195;
 	return {
 		settings: {
-			size: [ 256, 256 ],
+			size: [ 320, 256 ],
 			backgroundColor: '#222222',
 			firstScene: 0,
 		},
@@ -23,7 +23,7 @@ const Game = function() {
 					{ set: ['walkspeed', .7]},
 					{ set: ['person', {x:100,y:200}] },
 					{ set: ['ground', {
-						x:20, y:180, width:200, height:50,
+						x:20, y:180, width:300, height:50,
 					} ]},
 					{ set: ['limit.left', { get: 'ground.x'} ]},
 					{ set: ['limit.top', { get: 'ground.y'} ]},
@@ -101,6 +101,14 @@ const Game = function() {
 								],
 							},
 						],
+					},
+					{
+						if: { desc: [ { get: 'person.x' }, 200 ] },
+						set: [ 'scroll', -100 ],
+					},
+					{
+						if: { asc: [ { get: 'person.x' }, 180 ] },
+						set: [ 'scroll', 0 ],
 					},
 				],
 				sprites: [
