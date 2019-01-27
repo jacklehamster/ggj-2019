@@ -52,7 +52,7 @@ const Game = function() {
 					{ set: ['dog.cycle', [
 						{ x: 180, y: 170, time: 10000, flip:false },
 						{ x: 350, y: 160, time: 10000, flip: false },
-						{ x: 70, y: 150, time: 10000, flip:true },
+						{ x: 70, y: 150, time: 15000, flip:true },
 					]]},
 					{ set: ['dog.cycleIndex', 0 ]},
 				],
