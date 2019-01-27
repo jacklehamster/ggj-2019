@@ -4,7 +4,7 @@ const Game = function() {
 	const BALL_X = 52, BALL_Y = 170;
 	const PERSON_X = 100, PERSON_Y = 150;
 	const SPIKE_X = 150, SPIKE_Y = 170;
-	const WALKSPEED = 2;//.7;
+	const WALKSPEED = .7;
 	const DOGSPEED = .8;
 	return {
 		settings: {
