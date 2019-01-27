@@ -44,7 +44,8 @@ const Game = function() {
 			['front-door.png', 22, 85, null, null, null, { reverse: true } ],
 			['tv.png', 40, 62, null, -20, -62 ],
 			['fridge.png', 64, 64, null, null, null, null ],
-			['heater.png', 64, 64, null, null, null, null]
+			['heater.png', 64, 64, null, null, null, null ],
+			['chair.png', 64, 64, null, null, null, null ]
 		],
 		scenes: [
 			{
@@ -232,15 +233,17 @@ const Game = function() {
 						},
 					},
 					{
-<<<<<<< HEAD
 						name: 'heater',
-						x: 460,
-						y: 58,
+						x: 458,
+						y: 60,
 					},
 					{
-=======
+						name: 'chair',
+						x: 58,
+						y: 77,
+					},
+					{
 						if: { get: 'dogDoor.open' },
->>>>>>> 0ed7e57d44c41f4822f277553183e011a1da566a
 						name: 'front-door.reverse',
 						x: 29,
 						y: 70,
