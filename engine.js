@@ -602,7 +602,10 @@ const Engine = function(document, Game) {
 			if(sprite.alpha) {
 				ctx.globalAlpha = sprite.alpha;
 			}
-			ctx.fillText(text, x + getValue(offsetX, sprite) + (sprite.ignoreScroll ? 0 : Math.round(visualScroll)), y + getValue(offsetY, sprite));
+			const lines = text.split('\n');
+			for(let l=0; l<lines.length; l++) {
+				ctx.fillText(lines[l], x + getValue(offsetX, sprite) + (sprite.ignoreScroll ? 0 : Math.round(visualScroll)), l*10 - (lines.length/2) * 10 + y + getValue(offsetY, sprite));
+			}
 			if(sprite.alpha) {
 				ctx.globalAlpha = 1;
 			}

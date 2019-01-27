@@ -580,7 +580,7 @@ const Game = function() {
 						type: 'text',
 						text: { progressive: [{ get: 'dialog' }, {subtract:[{get:'now'},{get:'dialogStart'}]} ]},
 						x: 50,
-						y: 190,
+						y: 195,
 						color: '#2EA9BC',
 						ignoreScroll: true,
 					},
