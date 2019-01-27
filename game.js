@@ -70,7 +70,7 @@ const Game = function() {
 				],
 				actions: [
 					{
-						if: { asc: [{get:'dog.peeNeed'} ,10] },
+						if: { asc: [{get:'dog.peeNeed'} ,8] },
 						do: [
 							{ set: ['dog.idle', {subtract: [{get:'now'}, {get:'dog.timeInCycle'}]} ] },
 							{
@@ -104,9 +104,12 @@ const Game = function() {
 						],
 					},
 					{
-						if: { asc: [11, {get:'dog.peeNeed'}] },
+						if: { asc: [9, {get:'dog.peeNeed'}] },
 						do: [
-							{ log: 'need to pee'},
+							{ set: ['dog.goal', {
+								x: 310,
+								y: 135,
+							}]},
 						],
 					},
 					{
@@ -209,11 +212,20 @@ const Game = function() {
 								],
 							},
 							{ 
-								if: { and:[ {equal: [{get: 'destination.canInteract.item'}, { get:'picked'}]}, { get: 'picked' }] },
+								if: { and:[ {not:{equal:[{get:'destination.sprite'}, 'tv']}}, {equal: [{get: 'destination.canInteract.item'}, { get:'picked'}]}, { get: 'picked' }] },
 								do: [
 									{ set: [ 'picked', null ] },
 									{ set: [ { get: 'destination.canInteract.result' }, true ]},
 									{ playSound: 'blorng' },
+								],
+							},
+							{ 
+								if: { and:[ {equal:[{get:'destination.sprite'}, 'tv']}, {equal: [{get: 'destination.canInteract.item'}, { get:'picked'}]}, { get: 'picked' }] },
+								do: [
+									{ set: [ 'picked', null ] },
+									{ set: [ { get: 'destination.canInteract.result' }, true ]},
+									{ playSound: 'blorng' },
+									{ log: "busted television" },
 								],
 							},
 						],
