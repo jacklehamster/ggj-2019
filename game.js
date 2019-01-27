@@ -450,6 +450,12 @@ const Game = function() {
 					},
 					//fridge-face
 					{
+						if: { get: 'fridge-down' } ,
+						name: 'house-face.3',
+						x: 333,
+						y: 109,
+					},
+					{
 						if: { and: [{asc: [ 0, { get: 'person.x'}, 300 ]}, { not: { get: 'fridge-down' } }] },
 						name: 'house-face.1',
 						x: 333,
