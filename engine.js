@@ -19,6 +19,7 @@ const Engine = function(document, Game) {
 		mouse,
 		scroll: 0,
 		debug,
+		now: 0,
 	};
 
 	let debugDiv = null;
@@ -28,13 +29,16 @@ const Engine = function(document, Game) {
 			mouse,
 			scroll: 0,
 			debug,
+			now: 0,
 		};
+		sceneTime = new Date().getTime();
 		if(scene.init) {
 			scene.init.forEach(action => renderAction(action, 0));
 		}
 	}
 
-	function onNewFrame() {
+	function onNewFrame(now) {
+		sceneData.now = now;
 		sceneData.hovered = null;
 		const diff = sceneData.scroll - visualScroll;
 		if(Math.abs(diff) < 1) {
@@ -198,7 +202,6 @@ const Engine = function(document, Game) {
 	}
 
 	function setScene(index) {
-		sceneTime = new Date().getTime();
 		let newScene;
 		if(typeof(index) === 'string') {
 			newScene = scenes.filter(s => s.name = index)[0];
@@ -273,7 +276,7 @@ const Engine = function(document, Game) {
 
 	const renderList = [];
 	function renderScene(scene, now) {
-		onNewFrame();
+		onNewFrame(now);
 		clearCanvas(mainCanvas);
 		const { actions, sprites } = scene;
 		renderList.length = 0;
@@ -494,7 +497,8 @@ const Engine = function(document, Game) {
 
 	function renderImage(sprite, spriteDefinition, x, y, now) {
 		const { images, offsetX, offsetY } = spriteDefinition;
-		let frame = Math.floor(now / 1000 * spriteFrameRate);
+		const timeStart = sprite.animationStart ? getValue(sprite.animationStart) : 0;
+		let frame = Math.floor((now - timeStart) / 1000 * spriteFrameRate);
 		if(sprite.repeat && frame >= sprite.repeat * images.length) {
 			frame = images.length-1;
 		}

@@ -131,6 +131,20 @@ const Game = function() {
 						if: { asc: [ 340, { get: 'person.x' } ] },
 						set: [ 'scroll', -240 ],
 					},
+					{
+						if: { asc: [ 180, { get: 'person.x' } ], and: { not: { get: 'dogDoor.shut' } } },
+						do : [
+							{ set: [ 'dogDoor.shut', { get: 'now' } ] },
+							{ set: [ 'dogDoor.open', 0 ] },
+						],
+					},
+					{
+						if: { asc: [ { get: 'person.x' }, 150 ], and: { not: { get: 'dogDoor.open' } } },
+						do: [
+							{ set: [ 'dogDoor.shut', 0 ] }, 
+							{ set: [ 'dogDoor.open', { get: 'now' } ] },
+						],
+					},
 				],
 				sprites: [
 					{
@@ -139,10 +153,20 @@ const Game = function() {
 						y: 0,
 					},
 					{
+						if: { get: 'dogDoor.open' },
 						name: 'front-door.reverse',
 						x: 29,
 						y: 71,
 						repeat: 1,
+						animationStart: { get: 'dogDoor.open' },
+					},
+					{
+						if: { get: 'dogDoor.shut' },
+						name: 'front-door',
+						x: 29,
+						y: 71,
+						repeat: 1,
+						animationStart: { get: 'dogDoor.shut' },
 					},
 					{
 						name: 'tv',
