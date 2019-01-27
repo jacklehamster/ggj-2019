@@ -122,7 +122,24 @@ const Game = function() {
 						],
 					},
 					{
-						if: { asc: [9, {get:'dog.peeNeed'}] },
+						if: { and: [ {asc: [9, {get:'dog.peeNeed'}] }, {not: {get:'fridge-down'} } ] },
+						do: [
+							{ set: ['dog.goal', {
+								x: 310,
+								y: 135,
+							}]},
+							{
+								if: {get:'dog.onTarget'},
+								do: [
+									{set:['dog.cycleIndex', 1]},
+									{set: ['fridge-down', {get:'now'} ]},
+									
+								],
+							},
+						],
+					},
+					{
+						if: { and: [ {asc: [9, {get:'dog.peeNeed'}] }, {get:'fridge-down'}, {asc:[10000, {subtract:[{get:'now'},{get:'fridge-down'}]}]}   ]},
 						do: [
 							{ set: ['dog.goal', {
 								x: 310,
@@ -132,12 +149,11 @@ const Game = function() {
 								if: {get:'dog.onTarget'},
 								do: [
 									{set: ['dog.peeNeed', 0 ]},
-									{set: ['fridge-down', true ]},
+									{ set: ['dog.timeInCycle', {get:'now'} ]},
 								],
 							},
 						],
-					},
-					{
+					},					{
 						if: { and: [ { get:'mouse.down' }, { get:'notScrolling' } ] },
 						do: [
 							{ set: ['lastClick.x', { subtract: [{get: 'mouse.x'}, {get: 'scroll'}], clamp: [ { get:'limit.left'}, { get:'limit.right'} ] } ]},
@@ -325,6 +341,7 @@ const Game = function() {
 						dialog: "Your Automatic Nutritional Slurry Dispenser.  You are not hungry right now."
 					},
 					{
+						ifnot: { get: 'fridge-down' },
 						name: 'fridge-outlet.0',
 						x: 300,
 						y: 92,
@@ -334,6 +351,18 @@ const Game = function() {
 							flip: false,
 						},
 						dialog: "Your Slurry Dispenser's power cord.  It's protected against unplugging."
+					},
+					{
+						if: { get: 'fridge-down' },
+						name: 'fridge-outlet.1',
+						x: 300,
+						y: 92,
+						walkSpot: {
+							x: 298,
+							y: 135,
+							flip: false,
+						},
+						dialog: "..."
 					},
 					{
 						name: 'kitchen-counter',
