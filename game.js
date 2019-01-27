@@ -28,6 +28,8 @@ const Game = function() {
 			['dog-idle.png', 32, 25, null, -16, -25, { pingpong: true } ],
 			['dog-run.png', 32, 25, null, -16, -25, { pingpong: true } ],
 			['house-face.png', 16, 16 ],
+			['doorway.png', 34, 98, null, 0, -100 ],
+			['front-door.png', 22, 85, null, null, null, { reverse: true } ],
 		],
 		scenes: [
 			{
@@ -134,6 +136,17 @@ const Game = function() {
 						name: 'interior',
 						x: 0,
 						y: 0,
+					},
+					{
+						name: 'front-door.reverse',
+						x: 29,
+						y: 71,
+						repeat: 1,
+					},
+					{
+						name: 'doorway',
+						x: 360,
+						y: 175,
 					},
 					{
 						if: { asc: [ 0, { get: 'person.x'}, 129 ] },

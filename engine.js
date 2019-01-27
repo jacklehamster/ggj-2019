@@ -177,6 +177,16 @@ const Engine = function(document, Game) {
 				offsetX,
 				offsetY,
 			});
+			if(option && option.reverse) {
+				sprites.reverse();
+				addStock(`${tag}.reverse`, {
+					type: 'img',
+					images: sprites.map(sprite => sprite.images[0]),
+					offsetX,
+					offsetY,
+				});
+				sprites.reverse();
+			}			
 		});
 		img.src = src;
 	}
