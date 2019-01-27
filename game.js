@@ -20,7 +20,13 @@ const Game = function() {
 			['protag-idle.png', 48, 64, null, -24, -60 ],
 			['protag-idle-carry.png', 48, 64, null, -24, -60 ],
 			['protag-animation-walking.png', 48, 64, null, -24, -60 ],
-			['blorng.mp3'],
+			['audio/beep.mp3'],
+			['audio/blorng.mp3'],
+			['audio/soothing_tones_for_home1.mp3'],
+			['audio/power_charge.mp3'],
+			['audio/power_down1.mp3'],
+			['audio/power_down2.mp3'],
+			['audio/power_down3.mp3'],
 			['interior.png'],
 			['fridge-paper.png'],
 			['magnet.png', null, null, null, MAGNETXSHIFT, MAGNETYSHIFT],
@@ -111,7 +117,7 @@ const Game = function() {
 								do: [
 									{ set: [ { add:[ { get: 'picked' }, '-gone' ] }, false ] },
 									{ set: [ 'picked', null ] },
-									{ playSound: 'blorng' },
+									{ playSound: 'beep' },
 								],
 							},
 							{ 
@@ -119,7 +125,7 @@ const Game = function() {
 								do: [
 									{ set: [ 'picked', null ] },
 									{ set: [ { get: 'destination.canInteract.result' }, true ]},
-									{ playSound: 'blorng' },
+									{ playSound: 'beep' },
 								],
 							},
 						],
