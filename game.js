@@ -29,7 +29,7 @@ const Game = function() {
 			['audio/power_down1.mp3'],
 			['audio/power_down2.mp3'],
 			['audio/power_down3.mp3'],
-			['interior.png'],
+			['interior.png', null, null, null, null, null, { noHover: true} ],
 			['fridge-paper.png'],
 			['protag-idle.png', 48, 64, null, -24, -60, { noHover: true}  ],
 			['protag-idle-carry.png', 48, 64, null, -24, -60, { noHover: true}  ],
@@ -144,6 +144,7 @@ const Game = function() {
 									{ set: ['destination.canPick', null ] },
 									{ set: ['destination.canDrop', null ] },
 									{ set: ['destination.canInteract', null ] },
+									{ set: ['destination.dialog', null]},
 								],
 							},
 							{ if: { get: 'hovered.walkSpot' }, 
@@ -155,6 +156,8 @@ const Game = function() {
 									{ set: ['destination.canPick', { get: 'hovered.canPick'} ] },
 									{ set: ['destination.canDrop', { get: 'hovered.canDrop'} ] },
 									{ set: ['destination.canInteract', { get: 'hovered.canInteract'} ] },
+									{ set: ['destination.dialog', { get: 'hovered.dialog'}]},
+									{ set: ['dialogStart', null ]},
 								],
 							},
 							{ set: ['person.flip', { desc: [ { get: 'person.x' }, { get: 'destination.x' } ]} ]},
@@ -208,9 +211,20 @@ const Game = function() {
 						]
 					},
 					{
+						ifnot: { get: 'person.onTarget' },
+						set: ['dialog', null],
+					},
+					{
 						if: { get: 'person.onTarget' },
 						do: [
 							{ set: ['person.flip', { get:'destination.flip' } ] },
+							{
+								if: { and:[ {get: 'destination.dialog'}, {equal:[{get:'dialogStart'},null]}, {equal:[{get:'picked'},null]}]},
+								do: [
+									{ set: ['dialogStart', {get:'now'} ]},
+									{ set: ['dialog', {get: 'destination.dialog'}]},
+								],
+							},
 							{
 								if: { and:[ {get: 'destination.canInteract.noItem'}, {equal:[{get:'picked'},null]} ] },
 								set: [ { get: 'destination.canInteract.result' }, true ],
@@ -234,7 +248,7 @@ const Game = function() {
 								do: [
 									{ set: [ 'picked', null ] },
 									{ set: [ { get: 'destination.canInteract.result' }, true ]},
-									{ playSound: 'soothing_tones_for_home1' },
+									{ playSound: 'blorng' },
 								],
 							},
 							{ 
@@ -242,7 +256,7 @@ const Game = function() {
 								do: [
 									{ set: [ 'picked', null ] },
 									{ set: [ { get: 'destination.canInteract.result' }, true ]},
-									{ playSound: 'blorng' },
+									{ playSound: 'soothing_tones_for_home1' },
 									{ log: "busted television" },
 								],
 							},
@@ -352,7 +366,8 @@ const Game = function() {
 						canInteract: {
 							item: 'magnet',
 							result: 'tv-down',
-						},						
+						},
+						dialog: 'I hope you like your TV',				
 					},
 					{
 						name: 'doorway',
@@ -538,11 +553,30 @@ const Game = function() {
 						flip:{get:'dog.goal.flip'},
 					},
 					{
+						ifnot: { get: 'dialog' },
 						type: 'text',
 						text: { or: [{ get: 'tip' }, { tip: 'hovered.name' }] },
 						x: 50,
 						y: 190,
 						color: 'silver',
+						ignoreScroll: true,
+					},
+
+
+					{
+						if: { get: 'dialog' },
+						name: 'house-face.2',
+						x: 35,
+						y: 208,
+						ignoreScroll: true,
+					},
+					{
+						if: { get: 'dialog' },
+						type: 'text',
+						text: { progressive: [{ get: 'dialog' }, {subtract:[{get:'now'},{get:'dialogStart'}]} ]},
+						x: 50,
+						y: 190,
+						color: '#2EA9BC',
 						ignoreScroll: true,
 					},
 
