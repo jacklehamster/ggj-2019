@@ -230,19 +230,11 @@ const Game = function() {
 								],
 							},
 							{ 
-								if: { and:[ {not:{equal:[{get:'destination.sprite'}, 'tv']}}, {equal: [{get: 'destination.canInteract.item'}, { get:'picked'}]}, { get: 'picked' }] },
-								do: [
-									{ set: [ 'picked', null ] },
-									{ set: [ { get: 'destination.canInteract.result' }, true ]},
-									{ playSound: 'soothing_tones_for_home1' },
-								],
-							},
-							{ 
 								if: { and:[ {equal:[{get:'destination.sprite'}, 'tv']}, {equal: [{get: 'destination.canInteract.item'}, { get:'picked'}]}, { get: 'picked' }] },
 								do: [
 									{ set: [ 'picked', null ] },
 									{ set: [ { get: 'destination.canInteract.result' }, true ]},
-									{ playSound: 'blorng' },
+									{ playSound: 'power_down1' },
 									{ log: "busted television" },
 								],
 							},
