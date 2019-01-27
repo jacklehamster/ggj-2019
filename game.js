@@ -17,7 +17,7 @@ const Game = function() {
 			['ball.png', 32, 32, null, -16, -31 ],
 			['ball-empty.png', 32, 32, null, -16, -31 + BALLYSHIFT ],
 			['ball-deflate.png', 32, 32, null, -16, -32 ],
-			
+
 			['audio/beep.mp3', 0.5],
 			['audio/blorng.mp3', 0.5],
 			['audio/soothing_tones_for_home1.mp3', 0.3, { loop: true}],
@@ -40,6 +40,7 @@ const Game = function() {
 			['front-door.png', 22, 85, null, null, null, { reverse: true } ],
 			['tv.png', 40, 62, null, -20, -62 ],
 			['fridge.png', 64, 64, null, null, null, null ],
+			['fridge-paper.png', null, null, null, null, null, { tip: 'note' }],			
 			['heater.png', 64, 64, null, null, null, null ],
 			['chair.png', 64, 64, null, null, null, null ],
 			['bed.png', 64, 64, null, null, null, null ],
@@ -124,6 +125,13 @@ const Game = function() {
 								x: 310,
 								y: 135,
 							}]},
+							{
+								if: {get:'dog.onTarget'},
+								do: [
+									{set: ['dog.peeNeed', 0 ]},
+									{set: ['fridge-down', true ]},
+								],
+							},
 						],
 					},
 					{
