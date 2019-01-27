@@ -17,6 +17,7 @@ const Game = function() {
 			['ball.png', 32, 32, null, -16, -31 ],
 			['ball-empty.png', 32, 32, null, -16, -31 + BALLYSHIFT ],
 			['ball-deflate.png', 32, 32, null, -16, -32 ],
+			
 			['audio/beep.mp3', 0.5],
 			['audio/blorng.mp3', 0.5],
 			['audio/soothing_tones_for_home1.mp3', 0.3, { loop: true}],
@@ -27,13 +28,13 @@ const Game = function() {
 			['audio/power_down3.mp3'],
 			['protag-idle.png', 48, 64, null, -24, -60, { tip: 'resident' } ],
 			['protag-idle-carry.png', 48, 64, null, -24, -60, { tip: 'resident' } ],
-			['protag-animation-carrying.png', 48, 64, 0, -24, -60, { noHover: true} ],
-			['protag-animation-walking.png', 48, 64, null, -24, -60, { noHover: true } ],
+			['protag-animation-carrying.png', 48, 64, 0, -24, -60, { tip: 'resident'} ],
+			['protag-animation-walking.png', 48, 64, null, -24, -60, { tip: 'resident' } ],
 			['interior.png', null, null, null, null, null, { noHover: true }],
 			['magnet.png', null, null, null, MAGNETXSHIFT, MAGNETYSHIFT],
 			['magnet-outline.png', null, null, null, MAGNETXSHIFT, MAGNETYSHIFT],
-			['dog-idle.png', 32, 25, null, -16, -25, { pingpong: true, noHover: true } ],
-			['dog-run.png', 32, 25, null, -16, -25, { pingpong: true, noHover: true } ],
+			['dog-idle.png', 32, 25, null, -16, -25, { pingpong: true, tip: 'dog' } ],
+			['dog-run.png', 32, 25, null, -16, -25, { pingpong: true, tip: 'dog' } ],
 			['house-face.png', 16, 16, null, -8, -30, { noHover: true} ],
 			['doorway.png', 34, 98, null, 0, -100, { noHover: true} ],
 			['front-door.png', 22, 85, null, null, null, { reverse: true } ],
@@ -45,7 +46,7 @@ const Game = function() {
 			['wardrobe.png', 64, 80, null, null, null, null ],
 			['air-conditioner.png', 64, 64, null, null, null, null ],
 			['kitchen-counter.png', 72, 32, null, null, null, null ],
-			['front-door-overlay.png', 64, 144, null, 0, -128, null ]
+			['front-door-overlay.png', 64, 144, null, 0, -128, { noHover: true} ]
 		],
 		scenes: [
 			{
@@ -540,22 +541,12 @@ const Game = function() {
 						if: { get: 'dog.onTarget' },
 						x: {get:'dog.x'},
 						y: {get:'dog.y'},
-						walkSpot: {
-							x: {add:[{get:'dog.x'}, 20]},
-							y: {add:[{get:'dog.y'}, -3]},
-							flip: true,
-						},
 						flip:{get:'dog.goal.flip'},
 					},
 					{ name: 'dog-run',
 						ifnot: { get: 'dog.onTarget' },
 						x: {get:'dog.x'},
 						y: {get:'dog.y'},
-						walkSpot: {
-							x: {add:[{get:'dog.x'}, 20]},
-							y: {add:[{get:'dog.y'}, -3]},
-							flip: true,
-						},
 						flip:{get:'dog.goal.flip'},
 					},
 					{
