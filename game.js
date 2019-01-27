@@ -308,11 +308,18 @@ const Game = function() {
 							y: 135,
 							flip: false,
 						},
+						dialog: "Your Automatic Nutritional Slurry Dispenser.  You are not hungry right now."
 					},
 					{
 						name: 'kitchen-counter',
 						x: 230,
 						y: 95,
+						walkSpot: {
+							x: 230,
+							y: 135,
+							flip: false,
+						},
+						dialog: "This kitchen counter is for decoration only.  I will dispense slurries you need directly into the Refrigerator"
 					},
 					{
 						name: 'heater',
@@ -323,6 +330,12 @@ const Game = function() {
 						name: 'chair',
 						x: 58,
 						y: 77,
+						walkSpot: {
+							x: 58,
+							y: 140,
+							flip: false,
+						},
+						dialog: "Please, take a seat.  You have no reason to get up as I take care of your needs."
 					},
 					{
 						name: 'bed',
@@ -373,7 +386,7 @@ const Game = function() {
 							item: 'magnet',
 							result: 'tv-down',
 						},
-						dialog: 'I hope you like your TV',
+						dialog: 'Your Emotion Controlled Television.  No need to flip through channels, I will pick something that suits your mood.',
 					},
 					{
 						name: 'doorway',
