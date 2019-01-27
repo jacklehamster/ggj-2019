@@ -491,7 +491,10 @@ const Engine = function(document, Game) {
 
 	function renderImage(sprite, spriteDefinition, x, y, now) {
 		const { images, offsetX, offsetY } = spriteDefinition;
-		const frame = Math.floor(now / 1000 * spriteFrameRate);
+		let frame = Math.floor(now / 1000 * spriteFrameRate);
+		if(sprite.repeat && frame >= sprite.repeat * images.length) {
+			frame = images.length-1;
+		}
 		const img = images[frame % images.length];
 		const xx = Math.floor(x + getValue(offsetX)) + Math.round(visualScroll);
 		const yy = Math.floor(y + getValue(offsetY));
