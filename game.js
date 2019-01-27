@@ -27,6 +27,7 @@ const Game = function() {
 			['magnet-outline.png', null, null, null, MAGNETXSHIFT, MAGNETYSHIFT],
 			['dog-idle.png', 32, 25, null, -16, -25, { pingpong: true } ],
 			['dog-run.png', 32, 25, null, -16, -25, { pingpong: true } ],
+			['house-face.png', 16, 16 ],
 		],
 		scenes: [
 			{
@@ -123,24 +124,34 @@ const Game = function() {
 						if: { asc: [ 0, { get: 'person.x' }, 270 ] },
 						set: [ 'scroll', 0 ],
 					},
-					// {
-					// 	if: { asc: [ 200, { get: 'person.x' }, 300 ] },
-					// 	set: [ 'scroll', -100 ],
-					// },
 					{
 						if: { asc: [ 340, { get: 'person.x' } ] },
 						set: [ 'scroll', -240 ],
 					},
-					// {
-					// 	if: { asc: [ 400, { get: 'person.x' }, 500 ] },
-					// 	set: [ 'scroll', -300 ],
-					// },
 				],
 				sprites: [
 					{
 						name: 'interior',
 						x: 0,
 						y: 0,
+					},
+					{
+						if: { asc: [ 0, { get: 'person.x'}, 129 ] },
+						name: 'house-face.1',
+						x: 155,
+						y: 102,
+					},
+					{
+						if: { asc: [ 130, { get: 'person.x'}, 200 ] },
+						name: 'house-face.0',
+						x: 155,
+						y: 102,
+					},
+					{
+						if: { asc: [ 200, { get: 'person.x'} ] },
+						name: 'house-face.2',
+						x: 155,
+						y: 102,
 					},
 					{ type: 'rect',
 						color:'green',
