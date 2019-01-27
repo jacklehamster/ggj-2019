@@ -497,6 +497,10 @@ const Engine = function(document, Game) {
 		if(obj.subtract) {
 			returnValue = performSub(obj.subtract, context);
 		}
+		if(obj.mod) {
+			console.log(obj.mod);
+			returnValue = getValue(obj.mod[0], context) % getValue(obj.mod[1], context);
+		}
 
 		const property = obj.get || obj.floor || obj.round || obj.tip;
 		if(property) {

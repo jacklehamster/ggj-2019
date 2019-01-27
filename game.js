@@ -5,6 +5,7 @@ const Game = function() {
 	const PERSON_X = 100, PERSON_Y = 150;
 	const SPIKE_X = 150, SPIKE_Y = 170;
 	const WALKSPEED = 2;//.7;
+	const DOGSPEED = .8;
 	return {
 		settings: {
 			size: [ 380, 200 ],
@@ -47,23 +48,24 @@ const Game = function() {
 					{ set: ['limit.bottom', { add: [{ get: 'ground.y'}, { get: 'ground.height'}]} ]},
 					{ set: ['destination.x', { get: 'person.x' }]},
 					{ set: ['destination.y', { get: 'person.y' }]},
+					{ set: ['dog', {x:180, y:170}] },
 					{ set: ['dog.cycle', [
-						{ x: 180, y: 170, time: 5000 },
-						{ x: 380, y: 160, time: 5000 },
-						{ x: 10, y: 130, time: 5000 },
+						{ x: 180, y: 170, time: 10000, flip:false },
+						{ x: 350, y: 160, time: 10000, flip: false },
+						{ x: 70, y: 150, time: 10000, flip:true },
 					]]},
 					{ set: ['dog.cycleIndex', 0 ]},
-					{ set: ['dog.timeInCycle', 0 ]},
-					{ set: ['dog.goal', { x: 180, y: 170 }]}
 				],
 				actions: [
-					{ set: ['dog.idle', { subtract: [{get:'now'}, {get:'dog.timeInCycle'}] } ] },
-					// {
-					// 	if { asc: [{dog.},{get:'dog.idle'}] },
-					// 	do: [
-
-					// 	],
-					// },
+					{ set: ['dog.idle', {subtract: [{get:'now'}, {get:'dog.timeInCycle'}]} ] },
+					{ set: ['dog.goal', {get: {add:['dog.cycle.',{get:'dog.cycleIndex'}]}}]},
+					{
+						if: { asc: [{get:'dog.goal.time'},{get:'dog.idle'}] },
+						do: [
+							{ set: ['dog.cycleIndex', {mod:[{add:[{get:'dog.cycleIndex'},1]}, {get:'dog.cycle.length'}]}] },
+							{ set: ['dog.timeInCycle', {get:'now'} ]},
+						],
+					},
 					{
 						if: { and: [ { get:'mouse.down' }, { get:'notScrolling' } ] },
 						do: [
@@ -99,10 +101,12 @@ const Game = function() {
 						do: [
 							{ move: [ 'person.x', { round: 'destination.x' }, { step: {get:'walkspeed'} } ] },
 							{ move: [ 'person.y', { round: 'destination.y' }, { step: {get:'walkspeed'} } ] },
+							{ move: [ 'dog.x', { round: 'dog.goal.x' }, { step: DOGSPEED } ] },
+							{ move: [ 'dog.y', { round: 'dog.goal.y' }, { step: DOGSPEED } ] },
 						],
 					},
 					{ set: [
-							'onTarget',
+							'person.onTarget',
 							{ 
 								and: [
 									{ equal: [ 
@@ -120,8 +124,27 @@ const Game = function() {
 							},
 						]
 					},
+					{ set: [
+							'dog.onTarget',
+							{ 
+								and: [
+									{ equal: [ 
+										{ get:'dog.x' }, 
+										{ round: 'dog.goal.x' } 
+										],
+									},
+									{
+										equal: [
+											{ get:'dog.y' }, 
+											{ round: 'dog.goal.y' } 
+										],
+									},
+								],
+							},
+						]
+					},
 					{
-						if: { get: 'onTarget' },
+						if: { get: 'person.onTarget' },
 						do: [
 							{ set: ['person.flip', { get:'destination.flip' } ] },
 							{
@@ -345,13 +368,13 @@ const Game = function() {
 							{ name: 'protag-animation-walking', 
 								x: { get:'person.x' },
 								y: { get:'person.y' },
-								ifnot: { get: 'onTarget' },
+								ifnot: { get: 'person.onTarget' },
 								flip: { get: 'person.flip' },
 							},
 							{ name: 'protag-idle', 
 								x: { get:'person.x' },
 								y: { get:'person.y' },
-								if: { get: 'onTarget' },
+								if: { get: 'person.onTarget' },
 								flip: { get: 'person.flip' },
 							},
 						],
@@ -371,25 +394,38 @@ const Game = function() {
 							{ name: 'protag-animation-carrying', 
 								x: { get:'person.x' },
 								y: { get:'person.y' },
-								ifnot: { get: 'onTarget' },
+								ifnot: { get: 'person.onTarget' },
 								flip: { get: 'person.flip' },
 							},
 							{ name: 'protag-idle-carry', 
 								x: { get:'person.x' },
 								y: { get:'person.y' },
-								if: { get: 'onTarget' },
+								if: { get: 'person.onTarget' },
 								flip: { get: 'person.flip' },
 							},
 						],
 					},
 					{ name: 'dog-idle',
-						x: 180,
-						y: 170,
+						if: { get: 'dog.onTarget' },
+						x: {get:'dog.x'},
+						y: {get:'dog.y'},
 						walkSpot: {
-							x: 180 + 20,
-							y: 170 - 3,
+							x: {add:[{get:'dog.x'}, 20]},
+							y: {add:[{get:'dog.y'}, -3]},
 							flip: true,
 						},
+						flip:{get:'dog.goal.flip'},
+					},
+					{ name: 'dog-run',
+						ifnot: { get: 'dog.onTarget' },
+						x: {get:'dog.x'},
+						y: {get:'dog.y'},
+						walkSpot: {
+							x: {add:[{get:'dog.x'}, 20]},
+							y: {add:[{get:'dog.y'}, -3]},
+							flip: true,
+						},
+						flip:{get:'dog.goal.flip'},
 					},
 					{
 						type: 'text',
