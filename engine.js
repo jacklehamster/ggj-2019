@@ -1,5 +1,6 @@
 const Engine = function(document, Game) {
 	const { scenes, assets, settings, transformations } = Game; 
+	const debug = window.location.search.indexOf('debug') >= 0;
 
 	let spriteFrameRate = settings.spriteFrameRate || 10;
 	let ctx;
@@ -17,6 +18,7 @@ const Engine = function(document, Game) {
 	let sceneData = {
 		mouse,
 		scroll: 0,
+		debug,
 	};
 
 	let debugDiv = null;
@@ -25,6 +27,7 @@ const Engine = function(document, Game) {
 		sceneData = {
 			mouse,
 			scroll: 0,
+			debug,
 		};
 		if(scene.init) {
 			scene.init.forEach(action => renderAction(action, 0));
@@ -521,6 +524,9 @@ const Engine = function(document, Game) {
 
 	function setDebug(div) {
 		debugDiv = div;
+		if(!debug) {
+			debugDiv.style.display = "none";
+		}
 	}
 
 	function renderDebug(now) {
