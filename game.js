@@ -51,6 +51,7 @@ const Game = function() {
 			['chair.png', 64, 64, null, null, null, null ],
 			['bed.png', 64, 64, null, null, null, null ],
 			['wardrobe.png', 64, 80, null, null, null, null ],
+			['hanging-shirt.png', 32, 32, null, null, null, null ],
 			['air-conditioner.png', 64, 64, null, null, null, null ],
 			['kitchen-counter.png', 72, 32, null, null, null, null ],
 			['front-door-overlay.png', 64, 144, null, 0, -128, { noHover: true} ]
@@ -136,7 +137,7 @@ const Game = function() {
 								do: [
 									{set:['dog.cycleIndex', 1]},
 									{set: ['fridge-down', {get:'now'} ]},
-									
+
 								],
 							},
 						],
@@ -414,6 +415,26 @@ const Game = function() {
 						name: 'wardrobe',
 						x: 407,
 						y: 34,
+					},
+					{
+						name: 'hanging-shirt',
+						x: 407,
+						y: 53,
+					},
+					{
+						name: 'hanging-shirt',
+						x: 417,
+						y: 53,
+					},
+					{
+						name: 'hanging-shirt',
+						x: 427,
+						y: 53,
+					},
+						{
+						name: 'hanging-shirt',
+						x: 437,
+						y: 53,
 					},
 					{
 						name: 'air-conditioner',
