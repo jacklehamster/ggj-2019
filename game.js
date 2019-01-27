@@ -50,7 +50,8 @@ const Game = function() {
 			['bed.png', 64, 64, null, null, null, null ],
 			['wardrobe.png', 64, 80, null, null, null, null ],
 			['air-conditioner.png', 64, 64, null, null, null, null ],
-			['kitchen-counter.png', 72, 32, null, null, null, null ]
+			['kitchen-counter.png', 72, 32, null, null, null, null ],
+			['front-door-overlay.png', 64, 144, null, 0, -128, null ]
 		],
 		scenes: [
 			{
@@ -135,7 +136,7 @@ const Game = function() {
 						do: [
 							{ set: ['lastClick.x', { subtract: [{get: 'mouse.x'}, {get: 'scroll'}], clamp: [ { get:'limit.left'}, { get:'limit.right'} ] } ]},
 							{ set: ['lastClick.y', { get: 'mouse.y', clamp: [ { get:'limit.top'}, { get:'limit.bottom'} ] } ]},
-							{ ifnot: { get: 'hovered.walkSpot' }, 
+							{ ifnot: { get: 'hovered.walkSpot' },
 								do: [
 									{ set: ['destination.x', { get: 'lastClick.x' } ] },
 									{ set: ['destination.y', { get: 'lastClick.y' } ] },
@@ -146,7 +147,7 @@ const Game = function() {
 									{ set: ['destination.canInteract', null ] },
 								],
 							},
-							{ if: { get: 'hovered.walkSpot' }, 
+							{ if: { get: 'hovered.walkSpot' },
 								do: [
 									{ set: ['destination.x', { get: 'hovered.walkSpot.x' } ] },
 									{ set: ['destination.y', { get: 'hovered.walkSpot.y' } ] },
@@ -171,17 +172,17 @@ const Game = function() {
 					},
 					{ set: [
 							'person.onTarget',
-							{ 
+							{
 								and: [
-									{ equal: [ 
-										{ get:'person.x' }, 
-										{ round: 'destination.x' } 
+									{ equal: [
+										{ get:'person.x' },
+										{ round: 'destination.x' }
 										],
 									},
 									{
 										equal: [
-											{ get:'person.y' }, 
-											{ round: 'destination.y' } 
+											{ get:'person.y' },
+											{ round: 'destination.y' }
 										],
 									},
 								],
@@ -190,17 +191,17 @@ const Game = function() {
 					},
 					{ set: [
 							'dog.onTarget',
-							{ 
+							{
 								and: [
-									{ equal: [ 
-										{ get:'dog.x' }, 
-										{ round: 'dog.goal.x' } 
+									{ equal: [
+										{ get:'dog.x' },
+										{ round: 'dog.goal.x' }
 										],
 									},
 									{
 										equal: [
-											{ get:'dog.y' }, 
-											{ round: 'dog.goal.y' } 
+											{ get:'dog.y' },
+											{ round: 'dog.goal.y' }
 										],
 									},
 								],
@@ -229,7 +230,7 @@ const Game = function() {
 									{ playSound: 'beep' },
 								],
 							},
-							{ 
+							{
 								if: { and:[ {not:{equal:[{get:'destination.sprite'}, 'tv']}}, {equal: [{get: 'destination.canInteract.item'}, { get:'picked'}]}, { get: 'picked' }] },
 								do: [
 									{ set: [ 'picked', null ] },
@@ -237,7 +238,7 @@ const Game = function() {
 									{ playSound: 'soothing_tones_for_home1' },
 								],
 							},
-							{ 
+							{
 								if: { and:[ {equal:[{get:'destination.sprite'}, 'tv']}, {equal: [{get: 'destination.canInteract.item'}, { get:'picked'}]}, { get: 'picked' }] },
 								do: [
 									{ set: [ 'picked', null ] },
@@ -266,14 +267,14 @@ const Game = function() {
 					{
 						if: { and: [{asc: [ 120, { get: 'dog.x' } ]}, {not:{ get: 'dogDoor.shut' }}] },
 						do: [
-							{ set: [ 'dogDoor.shut', { get: 'now' } ] }, 
+							{ set: [ 'dogDoor.shut', { get: 'now' } ] },
 							{ set: [ 'dogDoor.open', 0 ] },
 						],
 					},
 					{
 						if: { and: [{asc: [ { get: 'person.x' }, 100 ]}, {not:{ get: 'dogDoor.shut' }}] },
 						do: [
-							{ set: [ 'dogDoor.shut', { get: 'now' } ] }, 
+							{ set: [ 'dogDoor.shut', { get: 'now' } ] },
 							{ set: [ 'dogDoor.open', 0 ] },
 						],
 					},
@@ -341,6 +342,11 @@ const Game = function() {
 						animationStart: { get: 'dogDoor.shut' },
 					},
 					{
+						name: 'front-door-overlay',
+						x: 0,
+						y: 159,
+					},
+					{
 						name: 'tv',
 						x: 166,
 						y: 132,
@@ -352,7 +358,7 @@ const Game = function() {
 						canInteract: {
 							item: 'magnet',
 							result: 'tv-down',
-						},						
+						},
 					},
 					{
 						name: 'doorway',
@@ -417,7 +423,7 @@ const Game = function() {
 						name: 'house-face.2',
 						x: 489,
 						y: 97,
-					},					
+					},
 
 					{ type: 'rect',
 						if: { get: 'debug' },
@@ -475,13 +481,13 @@ const Game = function() {
 					{
 						ifnot: { get: 'picked' },
 						group: [
-							{ name: 'protag-animation-walking', 
+							{ name: 'protag-animation-walking',
 								x: { get:'person.x' },
 								y: { get:'person.y' },
 								ifnot: { get: 'person.onTarget' },
 								flip: { get: 'person.flip' },
 							},
-							{ name: 'protag-idle', 
+							{ name: 'protag-idle',
 								x: { get:'person.x' },
 								y: { get:'person.y' },
 								if: { get: 'person.onTarget' },
@@ -501,13 +507,13 @@ const Game = function() {
 								y: { add: [{ get:'person.y' }, -26] },
 								flip: { get: 'person.flip' },
 							},
-							{ name: 'protag-animation-carrying', 
+							{ name: 'protag-animation-carrying',
 								x: { get:'person.x' },
 								y: { get:'person.y' },
 								ifnot: { get: 'person.onTarget' },
 								flip: { get: 'person.flip' },
 							},
-							{ name: 'protag-idle-carry', 
+							{ name: 'protag-idle-carry',
 								x: { get:'person.x' },
 								y: { get:'person.y' },
 								if: { get: 'person.onTarget' },
@@ -595,7 +601,7 @@ const Game = function() {
 									flip: false,
 								},
 							},
-						],							
+						],
 					},
 				],
 			},
