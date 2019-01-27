@@ -45,7 +45,11 @@ const Game = function() {
 			['tv.png', 40, 62, null, -20, -62 ],
 			['fridge.png', 64, 64, null, null, null, null ],
 			['heater.png', 64, 64, null, null, null, null ],
-			['chair.png', 64, 64, null, null, null, null ]
+			['chair.png', 64, 64, null, null, null, null ],
+			['bed.png', 64, 64, null, null, null, null ],
+			['wardrobe.png', 64, 80, null, null, null, null ],
+			['air-conditioner.png', 64, 64, null, null, null, null ],
+			['kitchen-counter.png', 72, 32, null, null, null, null ]
 		],
 		scenes: [
 			{
@@ -233,14 +237,34 @@ const Game = function() {
 						},
 					},
 					{
+						name: 'kitchen-counter',
+						x: 230,
+						y: 95,
+					},
+					{
 						name: 'heater',
 						x: 458,
-						y: 60,
+						y: 59,
 					},
 					{
 						name: 'chair',
 						x: 58,
 						y: 77,
+					},
+					{
+						name: 'bed',
+						x: 527,
+						y: 95,
+					},
+					{
+						name: 'wardrobe',
+						x: 407,
+						y: 34,
+					},
+					{
+						name: 'air-conditioner',
+						x: 105,
+						y: 55,
 					},
 					{
 						if: { get: 'dogDoor.open' },
