@@ -96,10 +96,18 @@ const Engine = function(document, Game) {
 		return canvas;
 	}
 
-	function loadSound(src) {
+	function loadSound(src, vol, loop) {
 		const audio = new Audio();
 		audio.addEventListener('canplaythrough', e => {
 			const tag = src.split("/").pop().split(".").slice(0, -1).join("");
+            if(!loop) {
+                loop = false;
+            }
+            if(!vol) {
+                vol = 0.5;
+            }
+            audio.volume = vol;
+            audio.loop = loop;
 			addStock(tag, {
 				type: 'audio',
 				audio,
@@ -245,8 +253,8 @@ const Engine = function(document, Game) {
 			});
 		assets.filter(asset => asset[0].split(".").pop()==='mp3')
 			.forEach(asset => {
-				const [ src ] = asset;
-				loadSound(src);
+				const [ src, vol, loop ] = asset;
+				loadSound(src, vol, loop);
 			});
 	}
 
