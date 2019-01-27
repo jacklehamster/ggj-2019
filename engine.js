@@ -19,6 +19,7 @@ const Engine = function(document, Game) {
 		mouse,
 		scroll: 0,
 		debug,
+		now: 0,
 	};
 
 	let debugDiv = null;
@@ -28,14 +29,18 @@ const Engine = function(document, Game) {
 			mouse,
 			scroll: 0,
 			debug,
+			now: 0,
 		};
+		sceneTime = new Date().getTime();
 		if(scene.init) {
 			scene.init.forEach(action => renderAction(action, 0));
 		}
 	}
 
-	function onNewFrame() {
+	function onNewFrame(now) {
+		sceneData.now = now;
 		sceneData.hovered = null;
+		sceneData.tip = null;
 		const diff = sceneData.scroll - visualScroll;
 		if(Math.abs(diff) < 1) {
 			visualScroll = sceneData.scroll;
@@ -91,10 +96,18 @@ const Engine = function(document, Game) {
 		return canvas;
 	}
 
-	function loadSound(src) {
+	function loadSound(src, vol, loop) {
 		const audio = new Audio();
 		audio.addEventListener('canplaythrough', e => {
 			const tag = src.split("/").pop().split(".").slice(0, -1).join("");
+            if(!loop) {
+                loop = false;
+            }
+            if(!vol) {
+                vol = 0.5;
+            }
+            audio.volume = vol;
+            audio.loop = loop;
 			addStock(tag, {
 				type: 'audio',
 				audio,
@@ -156,11 +169,12 @@ const Engine = function(document, Game) {
 						}],
 						offsetX,
 						offsetY,
+						option,
 					};
 					sprites.push(addStock(`${tag}.${index}`, sprite));
 				}
 			}
-			if(option && option.pingpong) {
+			if(option.pingpong) {
 				const totalCount = count * 2 - 1;
 				for(let i = 0; i < totalCount - count; i++) {
 					const index = count + i;
@@ -176,14 +190,16 @@ const Engine = function(document, Game) {
 				images: sprites.map(sprite => sprite.images[0]),
 				offsetX,
 				offsetY,
+				option,
 			});
-			if(option && option.reverse) {
+			if(option.reverse) {
 				sprites.reverse();
 				addStock(`${tag}.reverse`, {
 					type: 'img',
 					images: sprites.map(sprite => sprite.images[0]),
 					offsetX,
 					offsetY,
+					option,
 				});
 				sprites.reverse();
 			}			
@@ -198,7 +214,6 @@ const Engine = function(document, Game) {
 	}
 
 	function setScene(index) {
-		sceneTime = new Date().getTime();
 		let newScene;
 		if(typeof(index) === 'string') {
 			newScene = scenes.filter(s => s.name = index)[0];
@@ -234,12 +249,12 @@ const Engine = function(document, Game) {
 		assets.filter(asset => asset[0].split(".").pop()==='png')
 			.forEach(asset => {
 				const [ src, width, height, count, offsetX, offsetY, option ] = asset;
-				loadImage(src, width || 0, height || 0, count || 0, offsetX || 0, offsetY || 0, option);
+				loadImage(src, width || 0, height || 0, count || 0, offsetX || 0, offsetY || 0, option || {});
 			});
 		assets.filter(asset => asset[0].split(".").pop()==='mp3')
 			.forEach(asset => {
-				const [ src ] = asset;
-				loadSound(src);
+				const [ src, vol, loop ] = asset;
+				loadSound(src, vol, loop);
 			});
 	}
 
@@ -268,12 +283,12 @@ const Engine = function(document, Game) {
 	}
 
 	function compareSprites(sprite1, sprite2) {
-		return getValue(sprite1.y) - getValue(sprite2.y);
+		return getValue(sprite1.y, sprite1) - getValue(sprite2.y, sprite2);
 	}
 
 	const renderList = [];
 	function renderScene(scene, now) {
-		onNewFrame();
+		onNewFrame(now);
 		clearCanvas(mainCanvas);
 		const { actions, sprites } = scene;
 		renderList.length = 0;
@@ -285,11 +300,11 @@ const Engine = function(document, Game) {
 		renderDebug(now);
 	}
 
-	function validateIf(element) {
+	function validateIf(element, context) {
 		if(typeof(element.if) !== 'undefined' || typeof(element.ifnot) !== 'undefined') {
 			const conditionMet = typeof(element.if) !== 'undefined' 
-				? getValue(element.if)
-				: !getValue(element.ifnot);
+				? getValue(element.if, context)
+				: !getValue(element.ifnot, context);
 			if(!conditionMet) {
 				return false;
 			}
@@ -308,11 +323,11 @@ const Engine = function(document, Game) {
 			renderAction(action.do, now);
 		}
 		if(action.log) {
-			console.log(getValue(action.log));
+			console.log(getValue(action.log, action));
 		}
 		if(action.set) {
 			const [ prop, value ] = action.set;
-			setValue(prop, value, null);
+			setValue(prop, value, action);
 		}
 		if(action.length) {
 			for(let i=0; i<action.length; i++) {
@@ -324,17 +339,17 @@ const Engine = function(document, Game) {
 		}
 		if(action.move) {
 			const [ prop, to, options ] = action.move;
-			const step = options ? getValue(options.step)||1 : 1;
-			const currentValue = getPropValue(prop);
-			const goalValue = getValue(to);
+			const step = options ? getValue(options.step, action)||1 : 1;
+			const currentValue = getPropValue(prop, action);
+			const goalValue = getValue(to, action);
 			if(currentValue < goalValue) {
-				setValue(prop, Math.min(currentValue + step, goalValue));
+				setValue(prop, Math.min(currentValue + step, goalValue), action);
 			} else if(currentValue > goalValue) {
-				setValue(prop, Math.max(currentValue - step, goalValue));
+				setValue(prop, Math.max(currentValue - step, goalValue), action);
 			}
 		}
 		if(action.playSound) {
-			const name = getValue(action.playSound);
+			const name = getValue(action.playSound, action);
 			const audioDefinition = stock[name];
 			if(audioDefinition) {
 				audioDefinition.audio.play();
@@ -343,7 +358,7 @@ const Engine = function(document, Game) {
 	}
 
 	function renderSprite(sprite, now, offsetX, offsetY) {
-		const name = getValue(sprite.name);
+		const name = getValue(sprite.name, sprite);
 		const spriteDefinition = name ? stock[name] : sprite;
 		if(spriteDefinition) {
 			const { type } = spriteDefinition;
@@ -351,21 +366,27 @@ const Engine = function(document, Game) {
 				case 'img':
 					{
 						const { x, y } = sprite;
-						renderImage(sprite, spriteDefinition, getValue(x) + getValue(offsetX), getValue(y) + getValue(offsetY), now);
+						renderImage(sprite, spriteDefinition, getValue(x, sprite) + getValue(offsetX, sprite), getValue(y, sprite) + getValue(offsetY, sprite), now);
 					}
 					break;
 				case 'rect':
 					{
 						const { x, y } = sprite;
-						renderRect(sprite, spriteDefinition, getValue(x) + getValue(offsetX), getValue(y) + getValue(offsetY), now);
+						renderRect(sprite, spriteDefinition, getValue(x, sprite) + getValue(offsetX, sprite), getValue(y, sprite) + getValue(offsetY, sprite), now);
+					}
+					break;
+				case 'text':
+					{
+						const { x, y } = sprite;
+						renderText(sprite, spriteDefinition, getValue(x, sprite) + getValue(offsetX, sprite), getValue(y, sprite) + getValue(offsetY, sprite), now);
 					}
 					break;
 			}
 		}
 	}
 
-	function setValue(prop, obj, defaultValue) {
-		const property = getValue(prop);
+	function setValue(prop, obj, context) {
+		const property = getValue(prop, context);
 		if(!property) {
 			return;
 		}
@@ -377,10 +398,14 @@ const Engine = function(document, Game) {
 			}
 			o = o[props[i]];
 		}
-		o[lastProp] = getValue(obj);
+		o[lastProp] = getValue(obj, context);
 	}
 
-	function getPropValue(property) {
+	function getPropValue(prop, context) {
+		const property = getValue(prop);
+		if(!property) {
+			return undefined;
+		}
 		const props = property.split('.');
 		let o = sceneData, value = null;
 		for(let i=0; i<props.length; i++) {
@@ -395,40 +420,56 @@ const Engine = function(document, Game) {
 		return value;
 	}
 
-	function checkEqual(elements) {
-		const first = getValue(elements[0]);
+	function checkEqual(elements, context) {
+		const first = getValue(elements[0], context);
 		for(let i=1; i<elements.length; i++) {
-			if(first != getValue(elements[i])) {
+			if(first != getValue(elements[i], context)) {
 				return false;
 			}
 		}
 		return true;
 	}
 
-	function performAdd(elements) {
-		let value = getValue(elements[0]);
+	function checkAnd(elements, context) {
+		let value = getValue(elements[0], context);
 		for(let i=1; i<elements.length; i++) {
-			value += getValue(elements[i]);
+			value = value && getValue(elements[i], context);
 		}
 		return value;		
 	}
 
-	function performSub(elements) {
-		let value = getValue(elements[0]);
+	function checkOr(elements, context) {
+		let value = getValue(elements[0], context);
 		for(let i=1; i<elements.length; i++) {
-			value -= getValue(elements[i]);
+			value = value || getValue(elements[i], context);
 		}
 		return value;		
 	}
 
-	function checkSorted(elements, desc) {
+	function performAdd(elements, context) {
+		let value = getValue(elements[0], context);
+		for(let i=1; i<elements.length; i++) {
+			value += getValue(elements[i], context);
+		}
+		return value;		
+	}
+
+	function performSub(elements, context) {
+		let value = getValue(elements[0], context);
+		for(let i=1; i<elements.length; i++) {
+			value -= getValue(elements[i], context);
+		}
+		return value;		
+	}
+
+	function checkSorted(elements, desc, context) {
 		for(let i=1; i<elements.length; i++) {
 			if(desc) {
-				if(getValue(elements[i-1]) < getValue(elements[i])) {
+				if(getValue(elements[i-1], context) < getValue(elements[i], context)) {
 					return false;
 				}
 			} else {
-				if(getValue(elements[i-1]) > getValue(elements[i])) {
+				if(getValue(elements[i-1], context) > getValue(elements[i], context)) {
 					return false;
 				}
 			}
@@ -436,7 +477,7 @@ const Engine = function(document, Game) {
 		return true;
 	}
 
-	function getValue(obj) {
+	function getValue(obj, context) {
 		if(!obj || typeof(obj)!='object') {
 			if(typeof(obj)==='undefined') {
 				return 0;
@@ -450,68 +491,79 @@ const Engine = function(document, Game) {
 
 		let returnValue = obj;
 		if(obj.equal) {
-			returnValue = checkEqual(obj.equal);
+			returnValue = checkEqual(obj.equal, context);
 		}
 		if(obj.asc) {
-			returnValue = checkSorted(obj.asc, false);
+			returnValue = checkSorted(obj.asc, false, context);
 		}
 		if(obj.desc) {
-			returnValue = checkSorted(obj.desc, true);			
+			returnValue = checkSorted(obj.desc, true, context);			
 		}
 		if(obj.add) {
-			returnValue = performAdd(obj.add);
+			returnValue = performAdd(obj.add, context);
 		}
 		if(obj.subtract) {
-			returnValue = performSub(obj.subtract);
+			returnValue = performSub(obj.subtract, context);
+		}
+		if(obj.mod) {
+			console.log(obj.mod);
+			returnValue = getValue(obj.mod[0], context) % getValue(obj.mod[1], context);
 		}
 
-		const property = obj.get || obj.floor || obj.round;
+		const property = obj.get || obj.floor || obj.round || obj.tip;
 		if(property) {
-			returnValue = getPropValue(property);
+			returnValue = getPropValue(property, context);
 		}
 		if(obj.not) {
-			returnValue = !getValue(obj.not);
+			returnValue = !getValue(obj.not, context);
 		}
 		if(obj.and) {
-			returnValue = returnValue && getValue(obj.and);
+			returnValue = checkAnd(obj.and, context);
 		}
 		if(obj.or) {
-			if(!returnValue) {
-				returnValue = getValue(obj.or);
-			}
+			returnValue = checkOr(obj.or, context);
 		}
 		if(obj.floor) {
 			returnValue = Math.floor(returnValue);
 		} else if(obj.round) {
 			returnValue = Math.round(returnValue);
 		}
+		if(obj.tip && returnValue) {
+			returnValue = makeTip(returnValue);
+		}
 		if(obj.clamp) {
 			const [ min, max ] = obj.clamp;
-			returnValue = Math.min(getValue(max), Math.max(getValue(min), returnValue));
+			returnValue = Math.min(getValue(max, context), Math.max(getValue(min, context), returnValue));
 		}
 		return returnValue;
 	}
 
+	function makeTip(name) {
+		return name.split('.')[0].split('-').join(' ');
+	}
+
 	function renderImage(sprite, spriteDefinition, x, y, now) {
 		const { images, offsetX, offsetY } = spriteDefinition;
-		let frame = Math.floor(now / 1000 * spriteFrameRate);
+		const timeStart = sprite.animationStart ? getValue(sprite.animationStart, sprite) : 0;
+		let frame = Math.floor((now - timeStart) / 1000 * spriteFrameRate);
 		if(sprite.repeat && frame >= sprite.repeat * images.length) {
 			frame = images.length-1;
 		}
 		const img = images[frame % images.length];
-		const xx = Math.floor(x + getValue(offsetX)) + Math.round(visualScroll);
-		const yy = Math.floor(y + getValue(offsetY));
+		const xx = Math.floor(x + getValue(offsetX, sprite)) + Math.round(visualScroll);
+		const yy = Math.floor(y + getValue(offsetY, sprite));
 		const { canvas, imgData, flipCanvas, flipImgData } = img;
-		const shouldFlip = getValue(sprite.flip);
+		const shouldFlip = getValue(sprite.flip, sprite);
 		ctx.drawImage(shouldFlip ? flipCanvas : canvas, xx, yy);
 
-		if(sprite && sprite.name) {
+		if(sprite && sprite.name && !sprite.noHover && !spriteDefinition.option.noHover) {
 			const imgX = Math.floor(mouse.x - xx);
 			const imgY = Math.floor(mouse.y - yy);
 			if(0 <= imgX && imgX < canvas.width && 0 <= imgY && imgY < canvas.height) {
 				const data = shouldFlip ? flipImgData.data : imgData.data;
 				if (data[(imgX + imgY * canvas.width) * 4 + 3]>0) {
 					sceneData.hovered = sprite;
+					sceneData.tip = spriteDefinition.option.tip;
 				}
 			}
 		}
@@ -519,16 +571,36 @@ const Engine = function(document, Game) {
 
 	function renderRect(sprite, spriteDefinition, x, y, now) {
 		const { color, width, height, offsetX, offsetY } = spriteDefinition;
-		ctx.fillStyle = getValue(color) || 'black';
+		ctx.fillStyle = getValue(color, sprite) || 'black';
 		if(sprite.alpha) {
 			ctx.globalAlpha = sprite.alpha;
 		}
-		ctx.fillRect(x + getValue(offsetX) + Math.round(visualScroll), y + getValue(offsetY), getValue(width), getValue(height));
+		ctx.fillRect(x + getValue(offsetX, sprite) + Math.round(visualScroll), y + getValue(offsetY, sprite), getValue(width, sprite), getValue(height, sprite));
 		if(sprite.alpha) {
 			ctx.globalAlpha = 1;
 		}
-		if(sprite && sprite.name) {
+		if(sprite && sprite.name && !sprite.noHover && !spriteDefinition.option.noHover) {
 			sceneData.hovered = sprite;
+			sceneData.tip = spriteDefinition.option.tip;
+		}
+	}
+
+	function renderText(sprite, spriteDefinition, x, y, now) {
+		const { color, width, height, offsetX, offsetY } = spriteDefinition;
+		const text = getValue(sprite.text);
+		if(text) {
+			ctx.fillStyle = getValue(color, sprite) || 'black';
+			if(sprite.alpha) {
+				ctx.globalAlpha = sprite.alpha;
+			}
+			ctx.fillText(text, x + getValue(offsetX, sprite) + (sprite.ignoreScroll ? 0 : Math.round(visualScroll)), y + getValue(offsetY, sprite));
+			if(sprite.alpha) {
+				ctx.globalAlpha = 1;
+			}
+			if(sprite && sprite.name && !sprite.noHover && !spriteDefinition.option.noHover) {
+				sceneData.hovered = sprite;
+				sceneData.tip = spriteDefinition.option.tip;
+			}
 		}
 	}
 

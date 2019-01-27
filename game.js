@@ -4,7 +4,8 @@ const Game = function() {
 	const BALL_X = 52, BALL_Y = 170;
 	const PERSON_X = 100, PERSON_Y = 150;
 	const SPIKE_X = 150, SPIKE_Y = 170;
-	const WALKSPEED = 2;//.7;
+	const WALKSPEED = .7;
+	const DOGSPEED = .8;
 	return {
 		settings: {
 			size: [ 380, 200 ],
@@ -12,23 +13,34 @@ const Game = function() {
 			firstScene: 0,
 		},
 		assets: [
-			['person.png', 32, 32, null, -16, -32 ],
-			['protag-animation-carrying.png', 48, 64, 0, -24, -60 ],
+			['person.png', 32, 32, null, -16, -32, { noHover: true }  ],
+			['protag-animation-carrying.png', 48, 64, 0, -24, -60, { noHover: true} ],
 			['ball.png', 32, 32, null, -16, -31 ],
 			['ball-empty.png', 32, 32, null, -16, -31 + BALLYSHIFT ],
 			['ball-deflate.png', 32, 32, null, -16, -32 ],
 			['protag-idle.png', 48, 64, null, -24, -60 ],
 			['protag-idle-carry.png', 48, 64, null, -24, -60 ],
 			['protag-animation-walking.png', 48, 64, null, -24, -60 ],
-			['blorng.mp3'],
+			['audio/beep.mp3', 0.5],
+			['audio/blorng.mp3', 0.5],
+			['audio/soothing_tones_for_home1.mp3', 0.3, { loop: true}],
+			['audio/power_charge.mp3'],
+			['audio/power_down1.mp3'],
+			['audio/power_down2.mp3'],
+			['audio/power_down3.mp3'],
 			['interior.png'],
 			['fridge-paper.png'],
+			['protag-idle.png', 48, 64, null, -24, -60, { noHover: true}  ],
+			['protag-idle-carry.png', 48, 64, null, -24, -60, { noHover: true}  ],
+			['protag-animation-walking.png', 48, 64, null, -24, -60, { noHover: true}  ],
+			['interior.png', null, null, null, null, null, { noHover: true }],
+			['fridge-paper.png', null, null, null, null, null, { tip: 'note' }],
 			['magnet.png', null, null, null, MAGNETXSHIFT, MAGNETYSHIFT],
 			['magnet-outline.png', null, null, null, MAGNETXSHIFT, MAGNETYSHIFT],
-			['dog-idle.png', 32, 25, null, -16, -25, { pingpong: true } ],
-			['dog-run.png', 32, 25, null, -16, -25, { pingpong: true } ],
-			['house-face.png', 16, 16, null, -8, -30 ],
-			['doorway.png', 34, 98, null, 0, -100 ],
+			['dog-idle.png', 32, 25, null, -16, -25, { pingpong: true, noHover: true } ],
+			['dog-run.png', 32, 25, null, -16, -25, { pingpong: true, noHover: true } ],
+			['house-face.png', 16, 16, null, -8, -30, { noHover: true} ],
+			['doorway.png', 34, 98, null, 0, -100, { noHover: true} ],
 			['front-door.png', 22, 85, null, null, null, { reverse: true } ],
 			['tv.png', 40, 62, null, -20, -62 ],
 			['fridge.png', 64, 64, null, null, null, null ],
@@ -40,7 +52,7 @@ const Game = function() {
 					{ set: ['walkspeed', WALKSPEED]},
 					{ set: ['person', {x:PERSON_X,y:PERSON_Y}] },
 					{ set: ['ground', {
-						x:55, y:140, width:520, height:30,
+						x:55, y:150, width:520, height:20,
 					} ]},
 					{ set: ['limit.left', { get: 'ground.x'} ]},
 					{ set: ['limit.top', { get: 'ground.y'} ]},
@@ -48,13 +60,45 @@ const Game = function() {
 					{ set: ['limit.bottom', { add: [{ get: 'ground.y'}, { get: 'ground.height'}]} ]},
 					{ set: ['destination.x', { get: 'person.x' }]},
 					{ set: ['destination.y', { get: 'person.y' }]},
+					{ set: ['dog', {x:180, y:170}] },
+					{ set: ['dog.cycle', [
+						{ x: 180, y: 170, time: 2000, flip:false },
+						{ x: 250, y: 165, time: 5000, flip:false },
+						{ x: 450, y: 160, time: 10000, flip: false },
+						{ x: 70, y: 150, time: 15000, flip:true },
+						{ x: 10, y: 130, time: 1000, flip:true },
+						{ x: -20, y: 130, time: 8000, flip:true },
+						{ x: 10, y: 130, time: 1000, flip:false },
+						{ x: 70, y: 145, time: 5000, flip:false },
+					]]},
+					{ set: ['dog.cycleIndex', 0 ]},
 				],
 				actions: [
+					{ set: ['dog.idle', {subtract: [{get:'now'}, {get:'dog.timeInCycle'}]} ] },
+					{ set: ['dog.goal', {get: {add:['dog.cycle.',{get:'dog.cycleIndex'}]}}]},
 					{
-						if: { get:'mouse.down', and: { get:'notScrolling' } },
+						if: { asc: [{get:'dog.goal.time'},{get:'dog.idle'}] },
+						do: [
+							{ set: ['dog.cycleIndex', {mod:[{add:[{get:'dog.cycleIndex'},1]}, {get:'dog.cycle.length'}]}] },
+							{ set: ['dog.timeInCycle', {get:'now'} ]},
+						],
+					},
+					{
+						if: { and: [ { get:'mouse.down' }, { get:'notScrolling' } ] },
 						do: [
 							{ set: ['lastClick.x', { subtract: [{get: 'mouse.x'}, {get: 'scroll'}], clamp: [ { get:'limit.left'}, { get:'limit.right'} ] } ]},
 							{ set: ['lastClick.y', { get: 'mouse.y', clamp: [ { get:'limit.top'}, { get:'limit.bottom'} ] } ]},
+							{ ifnot: { get: 'hovered.walkSpot' }, 
+								do: [
+									{ set: ['destination.x', { get: 'lastClick.x' } ] },
+									{ set: ['destination.y', { get: 'lastClick.y' } ] },
+									{ set: ['destination.flip', { get: 'lastClick.flip' } ] },
+									{ set: ['destination.sprite', null ]},
+									{ set: ['destination.canPick', null ] },
+									{ set: ['destination.canDrop', null ] },
+									{ set: ['destination.canInteract', null ] },
+								],
+							},
 							{ if: { get: 'hovered.walkSpot' }, 
 								do: [
 									{ set: ['destination.x', { get: 'hovered.walkSpot.x' } ] },
@@ -66,8 +110,7 @@ const Game = function() {
 									{ set: ['destination.canInteract', { get: 'hovered.canInteract'} ] },
 								],
 							},
-							{ ifnot: { get: 'hovered.walkSpot' }, set: ['destination', { get: 'lastClick' } ]},
-							{ set: ['flip', { desc: [ { get: 'person.x' }, { get: 'destination.x' } ]} ]},
+							{ set: ['person.flip', { desc: [ { get: 'person.x' }, { get: 'destination.x' } ]} ]},
 							{ set: ['lastClick.flip', { desc: [ { get: 'person.x' }, { get: 'destination.x' } ]} ]},
 						],
 					},
@@ -75,52 +118,76 @@ const Game = function() {
 						do: [
 							{ move: [ 'person.x', { round: 'destination.x' }, { step: {get:'walkspeed'} } ] },
 							{ move: [ 'person.y', { round: 'destination.y' }, { step: {get:'walkspeed'} } ] },
+							{ move: [ 'dog.x', { round: 'dog.goal.x' }, { step: DOGSPEED } ] },
+							{ move: [ 'dog.y', { round: 'dog.goal.y' }, { step: DOGSPEED } ] },
 						],
 					},
 					{ set: [
-							'onTarget',
+							'person.onTarget',
 							{ 
-								equal: [ 
-									{ get:'person.x' }, 
-									{ round: 'destination.x' } 
+								and: [
+									{ equal: [ 
+										{ get:'person.x' }, 
+										{ round: 'destination.x' } 
+										],
+									},
+									{
+										equal: [
+											{ get:'person.y' }, 
+											{ round: 'destination.y' } 
+										],
+									},
 								],
-								and: {
-									equal: [
-										{ get:'person.y' }, 
-										{ round: 'destination.y' } 
-									],
-								},
+							},
+						]
+					},
+					{ set: [
+							'dog.onTarget',
+							{ 
+								and: [
+									{ equal: [ 
+										{ get:'dog.x' }, 
+										{ round: 'dog.goal.x' } 
+										],
+									},
+									{
+										equal: [
+											{ get:'dog.y' }, 
+											{ round: 'dog.goal.y' } 
+										],
+									},
+								],
 							},
 						]
 					},
 					{
-						if: { get: 'onTarget' },
+						if: { get: 'person.onTarget' },
 						do: [
-							{ set: ['flip', { get:'destination.flip' } ] },
+							{ set: ['person.flip', { get:'destination.flip' } ] },
 							{
-								if: { get: 'destination.canInteract.noItem', and: { equal: [ { get: 'picked' }, null ] } },
+								if: { and:[ {get: 'destination.canInteract.noItem'}, {equal:[{get:'picked'},null]} ] },
 								set: [ { get: 'destination.canInteract.result' }, true ],
 							},
-							{ if: { get: 'destination.canPick', and: { equal: [ { get: 'picked'}, null ] } },
+							{ if: { and:[ {get: 'destination.canPick'}, { equal: [ { get: 'picked'}, null ]} ] },
 								do: [
-									{ set: [ 'picked', { get: 'destination.sprite' } ] },
+									{ set: [ 'picked', { get: 'destination.canPick' } ] },
 									{ set: [ { add:[ { get: 'picked' }, '-gone' ] }, true ] },
 									{ playSound: 'blorng' },
 								],
 							},
-							{ if: { equal: [{ get: 'destination.canDrop' }, { get:'picked'} ], and: { get:'picked' } },
+							{ if: { and:[ {equal: [{ get: 'destination.canDrop' }, { get:'picked'}]}, { get:'picked' }] },
 								do: [
 									{ set: [ { add:[ { get: 'picked' }, '-gone' ] }, false ] },
 									{ set: [ 'picked', null ] },
-									{ playSound: 'blorng' },
+									{ playSound: 'beep' },
 								],
 							},
 							{ 
-								if: { equal: [ {get: 'destination.canInteract.item'}, { get:'picked'} ], and: { get: 'picked' } },
+								if: { and:[ {equal: [{get: 'destination.canInteract.item'}, { get:'picked'}]}, { get: 'picked' }] },
 								do: [
 									{ set: [ 'picked', null ] },
 									{ set: [ { get: 'destination.canInteract.result' }, true ]},
-									{ playSound: 'blorng' },
+									{ playSound: 'soothing_tones_for_home1' },
 								],
 							},
 						],
@@ -130,8 +197,22 @@ const Game = function() {
 						set: [ 'scroll', 0 ],
 					},
 					{
-						if: { asc: [ 340, { get: 'person.x' } ] },
+						if: { asc: [ 350, { get: 'person.x' } ] },
 						set: [ 'scroll', -240 ],
+					},
+					{
+						if: { and: [{asc: [ 180, { get: 'person.x' } ]}, {not:{ get: 'dogDoor.shut' }}] },
+						do : [
+							{ set: [ 'dogDoor.shut', { get: 'now' } ] },
+							{ set: [ 'dogDoor.open', 0 ] },
+						],
+					},
+					{
+						if: { and: [{asc: [ { get: 'person.x' }, 150 ]}, {not:{ get: 'dogDoor.open' }}] },
+						do: [
+							{ set: [ 'dogDoor.shut', 0 ] }, 
+							{ set: [ 'dogDoor.open', { get: 'now' } ] },
+						],
 					},
 				],
 				sprites: [
@@ -140,29 +221,46 @@ const Game = function() {
 						x: 0,
 						y: 0,
 					},
-
 					{
 						name: 'fridge',
 						x: 298,
 						y: 62,
+						walkSpot: {
+							x: 298,
+							y: 135,
+							flip: false,
+						},
 					},
 					{
+<<<<<<< HEAD
 						name: 'heater',
 						x: 460,
 						y: 58,
 					},
 					{
+=======
+						if: { get: 'dogDoor.open' },
+>>>>>>> 0ed7e57d44c41f4822f277553183e011a1da566a
 						name: 'front-door.reverse',
 						x: 29,
 						y: 70,
 						repeat: 1,
+						animationStart: { get: 'dogDoor.open' },
+					},
+					{
+						if: { get: 'dogDoor.shut' },
+						name: 'front-door',
+						x: 29,
+						y: 71,
+						repeat: 1,
+						animationStart: { get: 'dogDoor.shut' },
 					},
 					{
 						name: 'tv',
 						x: 166,
 						y: 132,
 						walkSpot: {
-							x: 166 - 20,
+							x: 166 - 25,
 							y: 132 + 5,
 							flip: false,
 						},
@@ -178,19 +276,19 @@ const Game = function() {
 					},
 					//fridge-face
 					{
-						if: { asc: [ 0, { get: 'person.x'}, 300 ], and: { not: { get: 'fridge-down' } } },
+						if: { and: [{asc: [ 0, { get: 'person.x'}, 300 ]}, { not: { get: 'fridge-down' } }] },
 						name: 'house-face.1',
 						x: 333,
 						y: 109,
 					},
 					{
-						if: { asc: [ 300, { get: 'person.x'}, 360 ], and: { not: { get: 'fridge-down' } } },
+						if: { and: [{asc: [ 300, { get: 'person.x'}, 360 ]}, { not: { get: 'fridge-down' } }] },
 						name: 'house-face.0',
 						x: 333,
 						y: 109,
 					},
 					{
-						if: { asc: [ 360, { get: 'person.x'} ], and: { not: { get: 'fridge-down' } } },
+						if: { and: [{asc: [ 360, { get: 'person.x'} ]}, { not: { get: 'fridge-down' } }] },
 						name: 'house-face.2',
 						x: 333,
 						y: 109,
@@ -198,23 +296,44 @@ const Game = function() {
 
 					//tv face
 					{
-						if: { asc: [ 0, { get: 'person.x'}, 129 ], and: { not: { get: 'tv-down' } } },
+						if: { and: [{asc: [ 0, { get: 'person.x'}, 130 ]}, { not: { get: 'tv-down' } }] },
 						name: 'house-face.1',
 						x: 163,
 						y: 133,
 					},
 					{
-						if: { asc: [ 130, { get: 'person.x'}, 200 ], and: { not: { get: 'tv-down' } } },
+						if: { and: [{asc: [ 130, { get: 'person.x'}, 200 ]}, { not: { get: 'tv-down' } }] },
 						name: 'house-face.0',
 						x: 163,
 						y: 133,
 					},
 					{
-						if: { asc: [ 200, { get: 'person.x'} ], and: { not: { get: 'tv-down' } } },
+						if: { and: [{asc: [ 200, { get: 'person.x'} ]}, { not: { get: 'tv-down' } }] },
 						name: 'house-face.2',
 						x: 163,
 						y: 133,
 					},
+
+					//heater face
+					{
+						if: { and: [{asc: [ 0, { get: 'person.x'}, 450 ]}, { not: { get: 'heater-down' } }] },
+						name: 'house-face.1',
+						x: 489,
+						y: 97,
+					},
+					{
+						if: { and: [{asc: [ 450, { get: 'person.x'}, 530 ]}, { not: { get: 'heater-down' } }] },
+						name: 'house-face.0',
+						x: 489,
+						y: 97,
+					},
+					{
+						if: { and: [{asc: [ 530, { get: 'person.x'} ]}, { not: { get: 'heater-down' } }] },
+						name: 'house-face.2',
+						x: 489,
+						y: 97,
+					},					
+
 					{ type: 'rect',
 						if: { get: 'debug' },
 						color:'green',
@@ -229,16 +348,26 @@ const Game = function() {
 						name: 'fridge-paper',
 						x: 335,
 						y: 104,
-					},					
+						canPick: "magnet",
+						walkSpot: {
+							x: 320,
+							y: 135,
+							flip: false,
+						},
+						canInteract: {
+							noItem: true,
+							result: 'fridge-paper-gone',
+						},
+					},
 					{
 						if: { get: 'magnet-gone' },
 						name: 'magnet-outline',
 						x: 336,
 						y: 113,
 						walkSpot: {
-							x: 335,
+							x: 320,
 							y: 150,
-							flip: true,
+							flip: false,
 						},
 						canDrop: 'magnet',
 					},
@@ -248,11 +377,11 @@ const Game = function() {
 						x: 336,
 						y: 113,
 						walkSpot: {
-							x: 335,
-							y: 150,
-							flip: true,
+							x: 320,
+							y: 135,
+							flip: false,
 						},
-						canPick: true,
+						canPick: "magnet",
 						canInteract: {
 							noItem: true,
 							result: 'fridge-paper-gone',
@@ -264,14 +393,14 @@ const Game = function() {
 							{ name: 'protag-animation-walking', 
 								x: { get:'person.x' },
 								y: { get:'person.y' },
-								ifnot: { get: 'onTarget' },
-								flip: { get: 'flip' },
+								ifnot: { get: 'person.onTarget' },
+								flip: { get: 'person.flip' },
 							},
 							{ name: 'protag-idle', 
 								x: { get:'person.x' },
 								y: { get:'person.y' },
-								if: { get: 'onTarget' },
-								flip: { get: 'flip' },
+								if: { get: 'person.onTarget' },
+								flip: { get: 'person.flip' },
 							},
 						],
 					},
@@ -281,81 +410,108 @@ const Game = function() {
 							{ name: { get: 'picked' },
 								x: { add: [
 									{ get:'person.x' },
-									{ if: { get: 'flip' }, add: [-15] },
-									{ ifnot: { get: 'flip' }, add: [15] },
+									{ if: { get: 'person.flip' }, add: [-17] },
+									{ ifnot: { get: 'person.flip' }, add: [15] },
 								] },
-								y: { add: [{ get:'person.y' }, -25] },
+								y: { add: [{ get:'person.y' }, -26] },
+								flip: { get: 'person.flip' },
 							},
 							{ name: 'protag-animation-carrying', 
 								x: { get:'person.x' },
 								y: { get:'person.y' },
-								ifnot: { get: 'onTarget' },
-								flip: { get: 'flip' },
+								ifnot: { get: 'person.onTarget' },
+								flip: { get: 'person.flip' },
 							},
 							{ name: 'protag-idle-carry', 
 								x: { get:'person.x' },
 								y: { get:'person.y' },
-								if: { get: 'onTarget' },
-								flip: { get: 'flip' },
+								if: { get: 'person.onTarget' },
+								flip: { get: 'person.flip' },
 							},
 						],
 					},
 					{ name: 'dog-idle',
-						x: SPIKE_X,
-						y: SPIKE_Y,
+						if: { get: 'dog.onTarget' },
+						x: {get:'dog.x'},
+						y: {get:'dog.y'},
 						walkSpot: {
-							x: SPIKE_X - 10,
-							y: SPIKE_Y + 5,
-							flip: false,
+							x: {add:[{get:'dog.x'}, 20]},
+							y: {add:[{get:'dog.y'}, -3]},
+							flip: true,
 						},
+						flip:{get:'dog.goal.flip'},
+					},
+					{ name: 'dog-run',
+						ifnot: { get: 'dog.onTarget' },
+						x: {get:'dog.x'},
+						y: {get:'dog.y'},
+						walkSpot: {
+							x: {add:[{get:'dog.x'}, 20]},
+							y: {add:[{get:'dog.y'}, -3]},
+							flip: true,
+						},
+						flip:{get:'dog.goal.flip'},
+					},
+					{
+						type: 'text',
+						text: { or: [{ get: 'tip' }, { tip: 'hovered.name' }] },
+						x: 50,
+						y: 190,
+						color: 'silver',
+						ignoreScroll: true,
 					},
 
-					// { name: 'ball',
-					// 	ifnot: { get: 'ball-gone' },
-					// 	x: BALL_X,
-					// 	y: BALL_Y,
-					// 	walkSpot: {
-					// 		x: BALL_X + 10,
-					// 		y: BALL_Y + 3,
-					// 		flip: true,
-					// 	},
-					// 	canPick: true,
-					// },
-					// { name: 'ball-empty',
-					// 	if: { get: 'ball-gone' },
-					// 	x: BALL_X,
-					// 	y: BALL_Y - BALLYSHIFT,
-					// 	walkSpot: {
-					// 		x: BALL_X + 10,
-					// 		y: BALL_Y + 3,
-					// 		flip: true,
-					// 	},
-					// 	canDrop: 'ball',
-					// },
-					// { name: 'ball-deflate.0',
-					// 	ifnot: { get: 'ball-deflated' },
-					// 	x: SPIKE_X,
-					// 	y: SPIKE_Y,
-					// 	walkSpot: {
-					// 		x: SPIKE_X - 10,
-					// 		y: SPIKE_Y + 5,
-					// 		flip: false,
-					// 	},
-					// 	canInteract: {
-					// 		item: 'ball',
-					// 		result: 'ball-deflated',
-					// 	},
-					// },
-					// { name: 'ball-deflate.1',
-					// 	if: { get: 'ball-deflated' },
-					// 	x: SPIKE_X,
-					// 	y: SPIKE_Y,
-					// 	walkSpot: {
-					// 		x: SPIKE_X - 10,
-					// 		y: SPIKE_Y + 5,
-					// 		flip: false,
-					// 	},
-					// },
+					{
+						if: { get: 'debug' },
+						group: [
+							{ name: 'ball',
+								ifnot: { get: 'ball-gone' },
+								x: BALL_X,
+								y: BALL_Y,
+								walkSpot: {
+									x: BALL_X + 10,
+									y: BALL_Y + 3,
+									flip: true,
+								},
+								canPick: "ball",
+							},
+							{ name: 'ball-empty',
+								if: { get: 'ball-gone' },
+								x: BALL_X,
+								y: BALL_Y - BALLYSHIFT,
+								walkSpot: {
+									x: BALL_X + 10,
+									y: BALL_Y + 3,
+									flip: true,
+								},
+								canDrop: 'ball',
+							},
+							{ name: 'ball-deflate.0',
+								ifnot: { get: 'ball-deflated' },
+								x: SPIKE_X,
+								y: SPIKE_Y,
+								walkSpot: {
+									x: SPIKE_X - 10,
+									y: SPIKE_Y + 5,
+									flip: false,
+								},
+								canInteract: {
+									item: 'ball',
+									result: 'ball-deflated',
+								},
+							},
+							{ name: 'ball-deflate.1',
+								if: { get: 'ball-deflated' },
+								x: SPIKE_X,
+								y: SPIKE_Y,
+								walkSpot: {
+									x: SPIKE_X - 10,
+									y: SPIKE_Y + 5,
+									flip: false,
+								},
+							},
+						],							
+					},
 				],
 			},
 		],
