@@ -27,8 +27,6 @@ const Game = function() {
 			['audio/power_down2.mp3', 0.5],
 			['audio/power_down3.mp3', 0.5],
 			['audio/door_whoosh.mp3', 0.3],
-			['interior.png'],
-			['fridge-paper.png'],
 			['protag-idle.png', 48, 64, null, -24, -60, { tip: 'resident' } ],
 			['protag-idle-carry.png', 48, 64, null, -24, -60, { tip: 'resident' } ],
 			['protag-animation-carrying.png', 48, 64, 0, -24, -60, { tip: 'resident'} ],
