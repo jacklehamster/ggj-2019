@@ -256,7 +256,7 @@ const Game = function() {
 								do: [
 									{ set: [ 'picked', null ] },
 									{ set: [ { get: 'destination.canInteract.result' }, true ]},
-									{ playSound: 'soothing_tones_for_home1' },
+									{ playSound: 'power_down1' },
 									{ log: "busted television" },
 								],
 							},
