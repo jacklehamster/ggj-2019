@@ -83,7 +83,7 @@ const Game = function() {
 						{ x: 70, y: 145, time: 5000, flip:false },
 					]]},
 					{ set: ['dog.cycleIndex', 0 ]},
-					{ set: ['dog.peeNeed', 10 ]},
+					{ set: ['dog.peeNeed', 0 ]},
 					{ set: [ 'dogDoor.shut', -1000 ] },
 					{ set: [ 'dogDoor.open', 0 ] },
 				],
