@@ -387,6 +387,12 @@ const Game = function() {
 
 					//tv face
 					{
+						if: { get: 'tv-down' } ,
+						name: 'house-face.3',
+						x: 163,
+						y: 133,
+					},
+					{
 						if: { and: [{asc: [ 0, { get: 'person.x'}, 130 ]}, { not: { get: 'tv-down' } }] },
 						name: 'house-face.1',
 						x: 163,
