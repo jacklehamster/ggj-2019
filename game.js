@@ -17,7 +17,8 @@ const Game = function() {
 			['ball.png', 32, 32, null, -16, -31 ],
 			['ball-empty.png', 32, 32, null, -16, -31 + BALLYSHIFT ],
 			['ball-deflate.png', 32, 32, null, -16, -32 ],
-
+			['audio/arf.mp3', 0.5],
+			['audio/bow_wow.mp3', 0.5],
 			['audio/beep.mp3', 0.5],
 			['audio/blorng.mp3', 0.5],
 			['audio/soothing_tones_for_home1.mp3', 0.3, { loop: true}],
@@ -108,6 +109,7 @@ const Game = function() {
 									{ set: ['dog.cycleIndex', {mod:[{subtract:[{get:'dog.cycleIndex'},2]}, {get:'dog.cycle.length'}]}] },
 									{ set: ['dog.timeInCycle', {get:'now'} ]},
 									{ set: ['dog.peeNeed', {add:[{get:'dog.peeNeed'},1]}]},
+									{ playSound: 'arf' },
 								],
 							},
 							{ set: ['dog.goal', {get: {add:['dog.cycle.',{get:'dog.cycleIndex'}]}}]},
