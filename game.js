@@ -111,7 +111,7 @@ const Game = function() {
 					{
 						if: { and: [{not:{get:'win'}}, { get: 'fridge-down' }, { get: 'heater-down' }, {get: 'tv-down'}] },
 						do: [
-							{ set: ['win', true]},
+							{ set: ['win', {get:'now'}]},
 						],
 					},
 					{
@@ -983,19 +983,28 @@ const Game = function() {
 
 
 					{
-						if: { get: 'dialog' },
+						if: {and: [{ get: 'dialog' }, {not:{get:'win'}}]},
+//						if: { get: 'dialog' },
 						name: 'house-face.2',
 						x: 35,
 						y: 208,
 						ignoreScroll: true,
 					},
 					{
-						if: { get: 'dialog' },
+						if: {and: [{ get: 'dialog' }, {not:{get:'win'}}]},
 						type: 'text',
 						text: { progressive: [{ get: 'dialog' }, {subtract:[{get:'now'},{get:'dialogStart'}]} ]},
 						x: 50,
 						y: 195,
 						color: '#2EA9BC',
+						ignoreScroll: true,
+					},
+					{
+						type: 'text',
+						text: { progressive: ["THANK YOU FOR PLAYING", {subtract:[{get:'now'},{get:'win'}]} ]},
+						x: 50,
+						y: 195,
+						color: '#FF393C',
 						ignoreScroll: true,
 					},
 
