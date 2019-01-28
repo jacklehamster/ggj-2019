@@ -981,6 +981,14 @@ const Game = function() {
 						ignoreScroll: true,
 					},
 
+					{
+						if: {and: [ {get:'win'}]},
+//						if: { get: 'dialog' },
+						name: 'house-face.3',
+						x: 35,
+						y: 208,
+						ignoreScroll: true,
+					},
 
 					{
 						if: {and: [{ get: 'dialog' }, {not:{get:'win'}}]},
