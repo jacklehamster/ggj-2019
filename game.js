@@ -637,7 +637,7 @@ const Game = function() {
 							y: 132 + 5,
 							flip: false,
 						},
-						dialog: 'I can detect any emotions right now.  \nPlease connect to your Auto-Therapist for recalibration',
+						dialog: 'I cannot detect any emotions right now.  \nPlease connect to your Auto-Therapist for recalibration',
 					},
 					{
 						name: 'doorway',
