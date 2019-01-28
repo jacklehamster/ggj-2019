@@ -159,7 +159,7 @@ const Game = function() {
 								y: 135,
 							}]},
 							{
-								if: {get:'dog.onTarget'},
+								if: {and: [{get:'dog.onTarget'}, {asc:[150,{get:'dog.x'}]} ]},
 								do: [
 									{set:['dog.cycleIndex', 1]},
 									{set: ['fridge-down', {get:'now'} ]},
