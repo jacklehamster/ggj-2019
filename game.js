@@ -58,6 +58,7 @@ const Game = function() {
 			['fridge-outlet-busted.png', 16, 32, 6, null, -16, null ],
 			['fridge-paper.png', null, null, null, null, null, { tip: 'note' }],
 			['heater.png', 64, 64, null, null, null, null ],
+			['heater-broken-sheet.png', 64, 64, null, null, null, { tip: 'broken heater'} ],
 			['chair.png', 64, 64, null, null, null, null ],
 			['bed.png', 64, 64, null, null, null, null ],
 			['wardrobe.png', 64, 80, null, null, null, null ],
@@ -105,6 +106,12 @@ const Game = function() {
 					{ set: [ 'person.shirts', 0 ] },
 				],
 				actions: [
+					{
+						if: { and: [{asc: [4, {get:'person.shirts'}]}, {not:{get:'heater-down'}}, {asc:[ 10000, {subtract:[{get:'now'},{get:'person.lastWorn'}]} ]} ] },
+						do: [
+							{ set: ['heater-down', true] },
+						],
+					},
 					{
 						if: { asc: [{get:'dog.peeNeed'} ,8] },
 						do: [
@@ -187,6 +194,7 @@ const Game = function() {
 								do: [
 									{ set: ['picked', null] },
 									{ set: ['person.shirts', {add:[{get:'person.shirts'}, 1]} ] },
+									{ set: ['person.lastWorn', {get:'now'}] },
 									// { inc: [ 'person.shirts', 1 ] },
 									{ log: "WEAR" },
 								],
@@ -458,10 +466,17 @@ const Game = function() {
 						dialog: "This kitchen counter is for decoration only. \nI will dispense slurries you need directly into the Refrigerator"
 					},
 					{
+						if: {not: {get:'heater-down'}},
 						name: 'heater',
 						x: 458,
 						y: 59,
 						dialog: "Your Auto-Thermo-Regulator 3000. \n It automatically adjusts the ambient temperature based on your comfort."
+					},
+					{
+						if: {get:'heater-down'},
+						name: 'heater-broken-sheet',
+						x: 458,
+						y: 59,
 					},
 					{
 						name: 'chair',
@@ -655,6 +670,12 @@ const Game = function() {
 					},
 
 					//heater face
+					{
+						if: { get: 'heater-down' } ,
+						name: 'house-face.3',
+						x: 489,
+						y: 97,
+					},
 					{
 						if: { and: [{asc: [ 0, { get: 'person.x'}, 450 ]}, { not: { get: 'heater-down' } }] },
 						name: 'house-face.1',
