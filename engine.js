@@ -262,6 +262,16 @@ const Engine = function(document, Game) {
 				const [ src, vol, loop ] = asset;
 				loadSound(src, vol, loop);
 			});
+		assets.filter(asset => asset[0].split(".").pop()==='ogg')
+			.forEach(asset => {
+				const [ src, vol, loop ] = asset;
+				loadSound(src, vol, loop);
+			});
+		assets.filter(asset => asset[0].split(".").pop()==='wav')
+			.forEach(asset => {
+				const [ src, vol, loop ] = asset;
+				loadSound(src, vol, loop);
+			});
 	}
 
 	function clearCanvas() {
