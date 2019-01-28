@@ -29,6 +29,7 @@ const Game = function() {
 			['audio/power_down3.mp3', 0.5],
 			['audio/door_whoosh.mp3', 0.3],
 			['audio/tv_static_stutter.mp3', 0.3, { loop: true}],
+			['audio/steam_hiss.mp3', 0.3, { loop: true}],
 			['protag-idle.png', 48, 64, null, -24, -60, { tip: 'resident' } ],
 			['protag-idle-carry.png', 48, 64, null, -24, -60, { tip: 'resident' } ],
 			['protag-animation-carrying.png', 48, 64, 0, -24, -60, { tip: 'resident'} ],
@@ -110,6 +111,8 @@ const Game = function() {
 						if: { and: [{asc: [4, {get:'person.shirts'}]}, {not:{get:'heater-down'}}, {asc:[ 10000, {subtract:[{get:'now'},{get:'person.lastWorn'}]} ]} ] },
 						do: [
 							{ set: ['heater-down', true] },
+							{ playSound: 'power_down3' },
+							{ playSound: 'steam_hiss' },
 						],
 					},
 					{
