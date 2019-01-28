@@ -599,7 +599,7 @@ const Engine = function(document, Game) {
 			frame = images.length-1;
 		}
 		const img = images[frame % images.length];
-		const xx = Math.floor(x + getValue(offsetX, sprite)) + Math.round(visualScroll);
+		const xx = Math.floor(x + getValue(offsetX, sprite)) + (sprite.ignoreScroll ? 0 : Math.round(visualScroll));
 		const yy = Math.floor(y + getValue(offsetY, sprite));
 		const { canvas, imgData, flipCanvas, flipImgData } = img;
 		const shouldFlip = getValue(sprite.flip, sprite);
