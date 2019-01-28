@@ -384,37 +384,52 @@ const Game = function() {
 						set: [ 'scroll', -240 ],
 					},
 					{
-						if: { and: [{asc: [ 110, { get: 'person.x' } ]}, {asc:[10, {get: 'dog.x'}, 100]}, {not:{ get: 'dogDoor.open' }}] },
-						do : [
+						if: {not: {get:'win'}},
+						do: [
+							{
+								if: { and: [{asc: [ 110, { get: 'person.x' } ]}, {asc:[10, {get: 'dog.x'}, 100]}, {not:{ get: 'dogDoor.open' }}] },
+								do : [
+									{ set: [ 'dogDoor.shut', 0 ] },
+									{ set: [ 'dogDoor.open', { get: 'now' } ] },
+		 							{ playSound: 'door_whoosh' },
+								],
+							},
+							{
+								if: { and: [{asc: [ 120, { get: 'dog.x' } ]}, {not:{ get: 'dogDoor.shut' }}] },
+								do: [
+									{ set: [ 'dogDoor.shut', { get: 'now' } ] },
+									{ set: [ 'dogDoor.open', 0 ] },
+									{ playSound: 'door_whoosh' },
+								],
+							},
+							{
+								if: { and: [{asc: [ { get: 'dog.x' }, 9 ]}, {not:{ get: 'dogDoor.shut' }}] },
+								do: [
+									{ set: [ 'dogDoor.shut', { get: 'now' } ] },
+									{ set: [ 'dogDoor.open', 0 ] },
+									{ playSound: 'door_whoosh' },
+								],
+							},
+							{
+								if: { and: [{asc: [ { get: 'person.x' }, 100 ]}, {not:{ get: 'dogDoor.shut' }}] },
+								do: [
+									{ set: [ 'dogDoor.shut', { get: 'now' } ] },
+									{ set: [ 'dogDoor.open', 0 ] },
+		 							{ playSound: 'door_whoosh' },
+								],
+							},					
+						],
+					},
+					{
+						if: {and:[{get:'win'}, {not:{ get: 'dogDoor.open' }}]},
+						do: [
 							{ set: [ 'dogDoor.shut', 0 ] },
 							{ set: [ 'dogDoor.open', { get: 'now' } ] },
  							{ playSound: 'door_whoosh' },
 						],
 					},
-					{
-						if: { and: [{asc: [ 120, { get: 'dog.x' } ]}, {not:{ get: 'dogDoor.shut' }}] },
-						do: [
-							{ set: [ 'dogDoor.shut', { get: 'now' } ] },
-							{ set: [ 'dogDoor.open', 0 ] },
-							{ playSound: 'door_whoosh' },
-						],
-					},
-					{
-						if: { and: [{asc: [ { get: 'dog.x' }, 9 ]}, {not:{ get: 'dogDoor.shut' }}] },
-						do: [
-							{ set: [ 'dogDoor.shut', { get: 'now' } ] },
-							{ set: [ 'dogDoor.open', 0 ] },
-							{ playSound: 'door_whoosh' },
-						],
-					},
-					{
-						if: { and: [{asc: [ { get: 'person.x' }, 100 ]}, {not:{ get: 'dogDoor.shut' }}] },
-						do: [
-							{ set: [ 'dogDoor.shut', { get: 'now' } ] },
-							{ set: [ 'dogDoor.open', 0 ] },
- 							{ playSound: 'door_whoosh' },
-						],
-					},
+
+
                     {
 						if: { and: [{ get: 'mouse.down' }, {not: { get: 'music.playing' }}, { get: 'music.playable'}] },
                         do: [
