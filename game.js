@@ -40,7 +40,7 @@ const Game = function() {
 			['doorway.png', 34, 98, null, 0, -100, { noHover: true} ],
 			['front-door.png', 22, 85, null, null, null, { reverse: true } ],
 			['tv.png', 40, 62, null, -20, -62 ],
-			['tv-busted.png', 40, 62, 3, -20, -62 ],
+			['tv-busted.png', 40, 62, , -20, -62 ],
 			['fridge.png', 64, 64, null, null, null, null ],
 			['fridge-outlet.png', 16, 16, null, null, null, null ],
 			['fridge-outlet-busted.png', 16, 32, 6, null, -16, null ],
@@ -50,7 +50,7 @@ const Game = function() {
 			['bed.png', 64, 64, null, null, null, null ],
 			['wardrobe.png', 64, 80, null, null, null, null ],
 			['hanging-shirt.png', 32, 32, null, null, null, null ],
-			['air-conditioner.png', 64, 64, null, null, null, null ],
+			['air-conditioner.png', 48, 48, 10, null, null, null ],
 			['kitchen-counter.png', 90, 48, null, null, null, null ],
 			['front-door-overlay.png', 64, 144, null, 0, -128, { noHover: true} ]
 		],
@@ -351,7 +351,7 @@ const Game = function() {
 							y: 135,
 							flip: false,
 						},
-						dialog: "Your Automatic Nutritional Slurry Dispenser. \nYou are not hungry right now."
+						dialog: "Your Automatic Nutritional Slurry Dispenser.  I cannot currently make \nyou a slurry as I am detecting you are still 40% satiated."
 					},
 					{
 						ifnot: { get: 'fridge-down' },
@@ -392,6 +392,11 @@ const Game = function() {
 						name: 'heater',
 						x: 458,
 						y: 59,
+						walkSpot: {
+							x: 440,
+							y: 140,
+							flip: false,
+						},
 						dialog: "Your Auto-Thermo-Regulator 3000. \n It automatically adjusts the ambient temperature based on your comfort."
 					},
 					{
@@ -409,6 +414,11 @@ const Game = function() {
 						name: 'bed',
 						x: 527,
 						y: 95,
+						walkSpot: {
+							x: 520,
+							y: 150,
+							flip: false,
+						},
 						dialog: "An archaic sleeping device used by Residents of a primitive past.\nYou can rest yourself at anytime on your ComFy Throne."
 					},
 					{
@@ -447,6 +457,12 @@ const Game = function() {
 						x: 29,
 						y: 70,
 						repeat: 1,
+						walkSpot: {
+							x: 60,
+							y: 150,
+							flip: true,
+						},
+						dialog: "This leads to outside your Residency.\nThere is nothing out there that I cannot order or 3D print.",
 						animationStart: { get: 'dogDoor.open' },
 					},
 					{
@@ -455,6 +471,12 @@ const Game = function() {
 						x: 29,
 						y: 70,
 						repeat: 1,
+						walkSpot: {
+							x: 60,
+							y: 150,
+							flip: true,
+						},
+						dialog: "This leads to outside your Residency.\nThere is nothing out there that I cannot order or 3D print.",
 						animationStart: { get: 'dogDoor.shut' },
 					},
 					{
@@ -488,7 +510,7 @@ const Game = function() {
 							y: 132 + 5,
 							flip: false,
 						},
-						dialog: '...',
+						dialog: 'I can detect any emotions right now.  \nPlease connect to your Auto-Therapist for recalibration',
 					},
 					{
 						name: 'doorway',
