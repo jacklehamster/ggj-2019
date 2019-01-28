@@ -548,6 +548,10 @@ const Engine = function(document, Game) {
 			const modVal = getValue(obj.mod[1], context);
 			returnValue = (getValue(obj.mod[0], context) + modVal) % modVal;
 		}
+		if(obj.shake) {
+			const shakeVal = Math.max(0, getValue(obj.shake[1], context) - 1);
+			returnValue = getValue(obj.shake[0], context) + (Math.random()-.5) * shakeVal;
+		}
 		if(obj.progressive) {
 			returnValue = progressive(obj.progressive[0], obj.progressive[1]);
 		}

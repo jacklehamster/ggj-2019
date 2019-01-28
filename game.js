@@ -109,7 +109,13 @@ const Game = function() {
 				],
 				actions: [
 					{
-						if: { and: [{asc: [4, {get:'person.shirts'}]}, {not:{get:'heater-down'}}, {asc:[ 10000, {subtract:[{get:'now'},{get:'person.lastWorn'}]} ]} ] },
+						if: { and: [{not:{get:'win'}}, { get: 'fridge-down' }, { get: 'heater-down' }, {get: 'tv-down'}] },
+						do: [
+							{ set: ['win', {get:'now'}]},
+						],
+					},
+					{
+						if: { and: [{asc: [4, {get:'person.shirts'}]}, {not:{get:'heater-down'}}, {asc:[ 5000, {subtract:[{get:'now'},{get:'person.lastWorn'}]} ]} ] },
 						do: [
 							{ set: ['heater-down', true] },
 							{ playSound: 'power_down3' },
@@ -159,7 +165,7 @@ const Game = function() {
 								y: 135,
 							}]},
 							{
-								if: {get:'dog.onTarget'},
+								if: {and: [{get:'dog.onTarget'}, {asc:[150,{get:'dog.x'}]} ]},
 								do: [
 									{set:['dog.cycleIndex', 1]},
 									{set: ['fridge-down', {get:'now'} ]},
@@ -470,11 +476,23 @@ const Game = function() {
 						},
 						dialog: "This kitchen counter is for decoration only. \nI will dispense slurries you need directly into the Refrigerator"
 					},
+// 					{
+// 						if: { and: [{asc: [{get:'person.shirts'}, 1]}, {not:{get:'heater-down'}} ] },
+// //						if: {not: {get:'heater-down'}},
+// 						name: 'heater',
+// 						x: 458,
+// 						y: 59,
+
+
+// 						dialog: "Your Auto-Thermo-Regulator 3000. \n It automatically adjusts the ambient temperature based on your comfort."
+// 					},
 					{
-						if: {not: {get:'heater-down'}},
+						//	SHAKING
+						if: { and: [{asc: [0, {get:'person.shirts'}]}, {not:{get:'heater-down'}} ] },
+//						if: {not: {get:'heater-down'}},
 						name: 'heater',
-						x: 458,
-						y: 59,
+						x: {shake:[458,{get:'person.shirts'}]},
+						y: {shake:[59,{get:'person.shirts'}]},
 						walkSpot: {
 							x: 440,
 							y: 140,
@@ -706,21 +724,50 @@ const Game = function() {
 					{
 						if: { and: [{asc: [ 0, { get: 'person.x'}, 450 ]}, { not: { get: 'heater-down' } }] },
 						name: 'house-face.1',
-						x: 489,
-						y: 97,
+						// x: 489,
+						// y: 97,
+						x: {shake:[489,{get:'person.shirts'}]},
+						y: {shake:[97,{get:'person.shirts'}]},
 					},
 					{
 						if: { and: [{asc: [ 450, { get: 'person.x'}, 530 ]}, { not: { get: 'heater-down' } }] },
 						name: 'house-face.0',
-						x: 489,
-						y: 97,
+						// x: 489,
+						// y: 97,
+						x: {shake:[489,{get:'person.shirts'}]},
+						y: {shake:[97,{get:'person.shirts'}]},
 					},
 					{
 						if: { and: [{asc: [ 530, { get: 'person.x'} ]}, { not: { get: 'heater-down' } }] },
 						name: 'house-face.2',
-						x: 489,
-						y: 97,
+						// x: 489,
+						// y: 97,
+						x: {shake:[489,{get:'person.shirts'}]},
+						y: {shake:[97,{get:'person.shirts'}]},
 					},
+
+
+// 					{
+// 						if: { and: [{asc: [{get:'person.shirts'}, 1]}, {not:{get:'heater-down'}} ] },
+// //						if: {not: {get:'heater-down'}},
+// 						name: 'heater',
+// 						x: 458,
+// 						y: 59,
+
+
+// 						dialog: "Your Auto-Thermo-Regulator 3000. \n It automatically adjusts the ambient temperature based on your comfort."
+// 					},
+// 					{
+// 						//	SHAKING
+// 						if: { and: [{asc: [2, {get:'person.shirts'}]}, {not:{get:'heater-down'}} ] },
+// //						if: {not: {get:'heater-down'}},
+// 						name: 'heater',
+// 						x: {shake:[458,{get:'person.shirts'}]},
+// 						y: {shake:[59,{get:'person.shirts'}]},
+
+// 						dialog: "Your Auto-Thermo-Regulator 3000. \n It automatically adjusts the ambient temperature based on your comfort."
+// 					},
+
 
 					{ type: 'rect',
 						if: { get: 'debug' },
@@ -936,19 +983,28 @@ const Game = function() {
 
 
 					{
-						if: { get: 'dialog' },
+						if: {and: [{ get: 'dialog' }, {not:{get:'win'}}]},
+//						if: { get: 'dialog' },
 						name: 'house-face.2',
 						x: 35,
 						y: 208,
 						ignoreScroll: true,
 					},
 					{
-						if: { get: 'dialog' },
+						if: {and: [{ get: 'dialog' }, {not:{get:'win'}}]},
 						type: 'text',
 						text: { progressive: [{ get: 'dialog' }, {subtract:[{get:'now'},{get:'dialogStart'}]} ]},
 						x: 50,
 						y: 195,
 						color: '#2EA9BC',
+						ignoreScroll: true,
+					},
+					{
+						type: 'text',
+						text: { progressive: ["THANK YOU FOR PLAYING", {subtract:[{get:'now'},{get:'win'}]} ]},
+						x: 50,
+						y: 195,
+						color: '#FF393C',
 						ignoreScroll: true,
 					},
 
