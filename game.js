@@ -109,6 +109,12 @@ const Game = function() {
 				],
 				actions: [
 					{
+						if: { and: [{not:{get:'win'}}, { get: 'fridge-down' }, { get: 'heater-down' }, {get: 'tv-down'}] },
+						do: [
+							{ set: ['win', true]},
+						],
+					},
+					{
 						if: { and: [{asc: [4, {get:'person.shirts'}]}, {not:{get:'heater-down'}}, {asc:[ 5000, {subtract:[{get:'now'},{get:'person.lastWorn'}]} ]} ] },
 						do: [
 							{ set: ['heater-down', true] },
