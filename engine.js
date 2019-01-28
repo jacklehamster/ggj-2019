@@ -262,6 +262,16 @@ const Engine = function(document, Game) {
 				const [ src, vol, loop ] = asset;
 				loadSound(src, vol, loop);
 			});
+		assets.filter(asset => asset[0].split(".").pop()==='ogg')
+			.forEach(asset => {
+				const [ src, vol, loop ] = asset;
+				loadSound(src, vol, loop);
+			});
+		assets.filter(asset => asset[0].split(".").pop()==='wav')
+			.forEach(asset => {
+				const [ src, vol, loop ] = asset;
+				loadSound(src, vol, loop);
+			});
 	}
 
 	function clearCanvas() {
@@ -335,6 +345,10 @@ const Engine = function(document, Game) {
 			const [ prop, value ] = action.set;
 			setValue(prop, value, action);
 		}
+		if(action.inc) {
+			const [ prop, value ] = action.inc;
+			setValue(prop, parseInt(getPropValue(prop)) + parseInt(getValue(value)), action);
+		}
 		if(action.length) {
 			for(let i=0; i<action.length; i++) {
 				const act = action[i];
@@ -392,7 +406,10 @@ const Engine = function(document, Game) {
 	}
 
 	function setValue(prop, obj, context) {
-		const property = getValue(prop, context);
+		let property = getValue(prop, context);
+		if(typeof(property) !== 'string') {
+			property = getValue(property, context);
+		}
 		if(!property) {
 			return;
 		}
@@ -434,6 +451,13 @@ const Engine = function(document, Game) {
 			}
 		}
 		return true;
+	}
+
+	function checkInclude(elements, context) {
+		const first = getValue(elements[0], context);
+		const second = getValue(elements[1], context);
+		if(!first || !second) return false;
+		return first.indexOf(second) >= 0;
 	}
 
 	function checkAnd(elements, context) {
@@ -505,6 +529,9 @@ const Engine = function(document, Game) {
 		if(obj.equal) {
 			returnValue = checkEqual(obj.equal, context);
 		}
+		if(obj.include) {
+			returnValue = checkInclude(obj.include, context);
+		}
 		if(obj.asc) {
 			returnValue = checkSorted(obj.asc, false, context);
 		}
@@ -554,7 +581,10 @@ const Engine = function(document, Game) {
 	}
 
 	function makeTip(name) {
-		return name.split('.')[0].split('-').join(' ');
+		if(typeof(name) !== 'string') {
+			name = getValue(name);
+		}
+		return name ? name.split('.')[0].split('-').join(' ') : '';
 	}
 
 	function renderImage(sprite, spriteDefinition, x, y, now) {
@@ -637,7 +667,10 @@ const Engine = function(document, Game) {
 
 	function renderDebug(now) {
 		if(debugDiv) {
-			debugDiv.innerText = JSON.stringify(sceneData, null, ' ');
+			debugDiv.innerText = JSON.stringify([
+				sceneData.destination,
+				sceneData.hovered,
+			], null, ' ');
 		}
 	}
 
