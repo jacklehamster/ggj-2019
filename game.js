@@ -1120,6 +1120,8 @@ const Game = function() {
 					{ stopSound: 'spark_fizzle_out'},
 					{ stopSound: 'power_down1' },
 					{ stopSound: 'tv_static_stutter' },									
+                    { stopSound: 'soothing_tones_for_home2' },
+                    { playSound: 'soothing_tones_for_home1' },
 				],
 				sprites: [
 					{
