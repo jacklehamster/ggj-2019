@@ -376,6 +376,13 @@ const Engine = function(document, Game) {
 				audioDefinition.audio.play();
             }
 		}
+		if(action.stopSound) {
+			const name = getValue(action.stopSound, action);
+			const audioDefinition = stock[name];
+			if(audioDefinition) {
+				audioDefinition.audio.pause();
+            }
+		}
 		if(action.setScene) {
 			setScene(action.setScene);
 		}

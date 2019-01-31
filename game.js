@@ -347,7 +347,7 @@ const Game = function() {
 						set: ['dialog', null],
 					},
 					{
-						if: { and: [{ get: 'person.onTarget'}, {get:'destination.exit'} ] },
+						if: { and: [{ get: 'person.onTarget'}, {get:'destination.exit'}, {get:'win'} ] },
 						do: [
 							{ log: "EXIT"},
 							{ setScene: 2 },
@@ -1114,6 +1114,13 @@ const Game = function() {
 				],
 			},
 			{
+				init: [
+					{ stopSound: 'power_down3' },
+					{ stopSound: 'steam_hiss' },
+					{ stopSound: 'spark_fizzle_out'},
+					{ stopSound: 'power_down1' },
+					{ stopSound: 'tv_static_stutter' },									
+				],
 				sprites: [
 					{
 						name: 'title-screen',
