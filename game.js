@@ -53,6 +53,7 @@ const Game = function() {
 			['house-face.png', 16, 16, null, -8, -30, { noHover: true} ],
 			['doorway.png', 34, 98, null, 0, -100, { noHover: true} ],
 			['front-door.png', 22, 85, null, null, null, { reverse: true } ],
+			['exit.png', 22, 85, null, null, null, { reverse: true } ],
 			['tv.png', 40, 62, null, -20, -62 ],
 			['tv-busted.png', 40, 62, 3, -20, -62 ],
 			['fridge.png', 64, 64, null, null, null, null ],
@@ -86,11 +87,11 @@ const Game = function() {
 					{
 						if: { get:'mouse.down' },
 						set: ['ready', true],
-					},				
+					},
 					{
 						if: { and: [{not:{ get:'mouse.down' }}, {get:'ready'}] },
 						setScene: 1,
-					},				
+					},
 				],
 			},
 			{
@@ -445,7 +446,7 @@ const Game = function() {
 									{ set: [ 'dogDoor.open', 0 ] },
 		 							{ playSound: 'door_whoosh' },
 								],
-							},					
+							},
 						],
 					},
 					{
@@ -640,7 +641,21 @@ const Game = function() {
 						y: 55,
 					},
 					{
-						if: { get: 'dogDoor.open' },
+						if: {get:'win'},
+						name: 'exit',
+						x: 29,
+						y: 70,
+						repeat: 1,
+						walkSpot: {
+							x: 60,
+							y: 150,
+							flip: true,
+						},
+						dialog: "This leads to outside your Residency.\nThere is nothing out there that I cannot order or 3D print.",
+						exit: true,
+					},
+					{
+						if: {and: [{ get: 'dogDoor.open' }, {not:{get:'win'}}]},
 						name: 'front-door',
 						x: 29,
 						y: 70,
@@ -655,7 +670,7 @@ const Game = function() {
 						exit: true,
 					},
 					{
-						if: { get: 'dogDoor.shut' },
+						if: {and: [{ get: 'dogDoor.shut' }, {not:{get:'win'}}]},
 						name: 'front-door.reverse',
 						x: 29,
 						y: 70,
@@ -669,6 +684,7 @@ const Game = function() {
 						animationStart: { get: 'dogDoor.shut' },
 					},
 					{
+						if: {not:{get:'win'}},
 						name: 'front-door-overlay.0',
 						x: 0,
 						y: 159,
@@ -1119,9 +1135,9 @@ const Game = function() {
 					{ stopSound: 'steam_hiss' },
 					{ stopSound: 'spark_fizzle_out'},
 					{ stopSound: 'power_down1' },
-					{ stopSound: 'tv_static_stutter' },									
-                    { stopSound: 'soothing_tones_for_home2' },
-                    { playSound: 'soothing_tones_for_home1' },
+					{ stopSound: 'tv_static_stutter' },
+          { stopSound: 'soothing_tones_for_home2' },
+          { playSound: 'soothing_tones_for_home1' }
 				],
 				sprites: [
 					{
@@ -1140,7 +1156,7 @@ const Game = function() {
 					},
 					{
 						type: 'text',
-						text: "Art:\nSeth Boyle",
+						text: "Art:\nSeth Boyles",
 						x: 280,
 						y: 30,
 						color: '#00FF99',
