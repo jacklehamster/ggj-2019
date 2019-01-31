@@ -312,7 +312,8 @@ const Engine = function(document, Game) {
 		renderList.sort(compareSprites);
 
 		renderList.forEach(sprite => renderSprite(sprite, now, 0, 0));
-		actions.forEach(action => renderAction(action, now));
+		if(actions)
+			actions.forEach(action => renderAction(action, now));
 		renderDebug(now);
 	}
 
@@ -374,6 +375,9 @@ const Engine = function(document, Game) {
 			if(audioDefinition) {
 				audioDefinition.audio.play();
             }
+		}
+		if(action.setScene) {
+			setScene(action.setScene);
 		}
 	}
 
@@ -492,6 +496,14 @@ const Engine = function(document, Game) {
 		return value;		
 	}
 
+	function performDiv(elements, context) {
+		let value = getValue(elements[0], context);
+		for(let i=1; i<elements.length; i++) {
+			value /= getValue(elements[i], context);
+		}
+		return value;		
+	}
+
 	function checkSorted(elements, desc, context) {
 		for(let i=1; i<elements.length; i++) {
 			if(desc) {
@@ -543,6 +555,9 @@ const Engine = function(document, Game) {
 		}
 		if(obj.subtract) {
 			returnValue = performSub(obj.subtract, context);
+		}
+		if(obj.div) {
+			returnValue = performDiv(obj.div, context);
 		}
 		if(obj.mod) {
 			const modVal = getValue(obj.mod[1], context);
@@ -672,8 +687,7 @@ const Engine = function(document, Game) {
 	function renderDebug(now) {
 		if(debugDiv) {
 			debugDiv.innerText = JSON.stringify([
-				sceneData.destination,
-				sceneData.hovered,
+				sceneData,
 			], null, ' ');
 		}
 	}

@@ -70,9 +70,29 @@ const Game = function() {
 			['hanging-shirt-3.png', 32, 32, null, -14, -16, { tip: 'plain shirt' }  ],
 			['air-conditioner.png', 48, 48, 10, null, null, null ],
 			['kitchen-counter.png', 90, 48, null, null, null, null ],
-			['front-door-overlay.png', 64, 144, null, 0, -128, { noHover: true} ]
+			['front-door-overlay.png', 64, 144, null, 0, -128, { noHover: true} ],
+			['title-screen.png'],
 		],
 		scenes: [
+			{
+				sprites: [
+					{
+						name: 'title-screen',
+						x: 0,
+						y: 0,
+					},
+				],
+				actions: [
+					{
+						if: { get:'mouse.down' },
+						set: ['ready', true],
+					},				
+					{
+						if: { and: [{not:{ get:'mouse.down' }}, {get:'ready'}] },
+						setScene: 1,
+					},				
+				],
+			},
 			{
 				init: [
 					{ set: ['walkspeed', WALKSPEED]},
@@ -234,6 +254,7 @@ const Game = function() {
 									{ set: ['destination.canInteract', { get: 'hovered.canInteract'} ] },
 									{ set: ['destination.dialog', { get: 'hovered.dialog'}]},
 									{ set: ['destination.canWear', { get: 'hovered.canWear'} ] },
+									{ set: ['destination.exit', { get: 'hovered.exit'} ] },
 									{ set: ['dialogStart', null ]},
 								],
 							},
@@ -324,6 +345,13 @@ const Game = function() {
 					{
 						ifnot: { get: 'person.onTarget' },
 						set: ['dialog', null],
+					},
+					{
+						if: { and: [{ get: 'person.onTarget'}, {get:'destination.exit'} ] },
+						do: [
+							{ log: "EXIT"},
+							{ setScene: 2 },
+						],
 					},
 					{
 						if: { get: 'person.onTarget' },
@@ -624,6 +652,7 @@ const Game = function() {
 						},
 						dialog: "This leads to outside your Residency.\nThere is nothing out there that I cannot order or 3D print.",
 						animationStart: { get: 'dogDoor.open' },
+						exit: true,
 					},
 					{
 						if: { get: 'dogDoor.shut' },
@@ -1081,6 +1110,48 @@ const Game = function() {
 								},
 							},
 						],
+					},
+				],
+			},
+			{
+				sprites: [
+					{
+						name: 'title-screen',
+						x: 0,
+						y: 0,
+						ignoreScroll: true,
+					},
+					{
+						type: 'text',
+						text: "Programming:\nVincent Le Quang",
+						x: 40,
+						y: 30,
+						color: '#00FF99',
+						ignoreScroll: true,
+					},
+					{
+						type: 'text',
+						text: "Art:\nSeth Boyle",
+						x: 280,
+						y: 30,
+						color: '#00FF99',
+						ignoreScroll: true,
+					},
+					{
+						type: 'text',
+						text: "Sound:\nPhil Hermans",
+						x: 170,
+						y: 30,
+						color: '#00FF99',
+						ignoreScroll: true,
+					},
+					{
+						type: 'text',
+						text: "Produced at NoiseBridge in SF\nFor Global Game Jam 2019\n\nTHANK YOU FOR PLAYING",
+						x: 120,
+						y: 175,
+						color: '#00FF99',
+						ignoreScroll: true,
 					},
 				],
 			},
