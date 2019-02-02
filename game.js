@@ -130,6 +130,27 @@ const Game = function() {
 				],
 				actions: [
 					{
+						if: { and: [{get: 'tv-down'}, {not: {get: 'triggered-tv-down'}}]},
+						do: [
+							{ set: ['triggered-tv-down']},
+							{ trigger: "tv-down", medal: "Bust the TV" },
+						],
+					},
+					{
+						if: { and: [{get: 'fridge-down'}, {not: {get: 'triggered-fridge-down'}}]},
+						do: [
+							{ set: ['triggered-fridge-down', true]},
+							{ trigger: "fridge-down", medal: "Bust the Fridge" },
+						],
+					},
+					{
+						if: { and: [{get: 'heater-down'}, {not: {get: 'triggered-heater-down'}}]},
+						do: [
+							{ set: ['triggered-heater-down', true]},
+							{ trigger: "heater-down", medal: "Bust the Heater" },
+						],
+					},
+					{
 						if: { and: [{not:{get:'win'}}, { get: 'fridge-down' }, { get: 'heater-down' }, {get: 'tv-down'}] },
 						do: [
 							{ set: ['win', {get:'now'}]},
@@ -1136,8 +1157,9 @@ const Game = function() {
 					{ stopSound: 'spark_fizzle_out'},
 					{ stopSound: 'power_down1' },
 					{ stopSound: 'tv_static_stutter' },
-          { stopSound: 'soothing_tones_for_home2' },
-          { playSound: 'soothing_tones_for_home1' }
+					{ stopSound: 'soothing_tones_for_home2' },
+					{ playSound: 'soothing_tones_for_home1' },
+					{ trigger: "escape", medal: "Escape" },
 				],
 				sprites: [
 					{

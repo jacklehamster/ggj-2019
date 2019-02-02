@@ -35,6 +35,7 @@ const Engine = function(document, Game) {
             music,
 		};
 		sceneTime = new Date().getTime();
+		triggered = {};
 		if(scene.init) {
 			scene.init.forEach(action => renderAction(action, 0));
 		}
@@ -386,6 +387,9 @@ const Engine = function(document, Game) {
 		if(action.setScene) {
 			setScene(action.setScene);
 		}
+		if(action.trigger) {
+			dispatchTrigger(action);
+		}
 	}
 
 	function renderSprite(sprite, now, offsetX, offsetY) {
@@ -699,6 +703,34 @@ const Engine = function(document, Game) {
 		}
 	}
 
+	let triggered = {};
+	const triggers = {};
+	const triggersOnAll = [];
+	function onTrigger(trigger, callback) {
+		if(typeof(trigger)==='function') {
+			triggersOnAll.push(trigger);
+		} else {
+			if(!triggers[trigger]) {
+				triggers[trigger] = [];
+			}
+			triggers[trigger].push(callback);
+		}
+	}
+
+	function dispatchTrigger(action) {
+		if(!triggered[action.trigger]) {
+			if(triggers[action.trigger]) {
+				triggers[action.trigger].forEach(callback => {
+					callback(action);
+				});
+			}
+			triggersOnAll.forEach(callback => {
+				callback(action);
+			});
+			triggered[action.trigger] = true;
+		}
+	}	
+
 	document.addEventListener("DOMContentLoaded", init);
 
 	return {
@@ -707,5 +739,6 @@ const Engine = function(document, Game) {
 		getValue,
 		setValue,
 		stock,
+		onTrigger,
 	};
 }(document, Game);
